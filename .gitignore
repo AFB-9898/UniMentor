@@ -21,8 +21,24 @@ build/
 .DS_Store
 Thumbs.db
 
+# Project source docs (not part of the codebase)
+/Requisaitos*.docx
+/tarea.txt
+
 # AI / Tooling
 .atl/
+
+# LaTeX build artifacts
+*.aux
+*.out
+*.toc
+*.synctex.gz
+*.pdf
+*.log
+*.fdb_latexmk
+*.fls
+*.bbl
+*.blg
 
 # Logs
 *.log
