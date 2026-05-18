@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="doc-proyecto/logo.png" alt="UniMentor Logo" width="180"/>
+  <img src="docs/logo.png" alt="UniMentor Logo" width="180"/>
   <h1>UniMentor</h1>
 </div>
 
@@ -31,10 +31,18 @@ Este proyecto pertenece a la línea de **Plataformas Educativas (EdTech)**, dent
 
 ```
 UniMentor/
-├── doc-proyecto/          # Documentación del proyecto (LaTeX)
-│   ├── unimentor.tex      # Documento principal
-│   └── logo.png           # Logo del proyecto
-├── src/                   # Código fuente (React + TypeScript)
+├── docs/                      # Documentación visual y recursos
+│   ├── logo.png               # Logo del proyecto
+│   ├── mockups/               # Mockups de la interfaz
+│   │   ├── landing-page.png
+│   │   ├── mentor-search.png
+│   │   ├── mentor-profile.png
+│   │   └── README.md
+│   ├── componentes/           # Diagramas de componentes reutilizables
+│   ├── arquitectura/          # Diagrama de arquitectura general
+│   └── refactorizacion/       # Ejemplos de refactorización
+├── src/                       # Código fuente (React + TypeScript)
+├── .gitignore
 └── README.md
 ```
 
