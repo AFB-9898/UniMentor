@@ -1,4 +1,7 @@
-# UniMentor
+<div align="center">
+  <img src="doc-proyecto/logo.png" alt="UniMentor Logo" width="180"/>
+  <h1>UniMentor</h1>
+</div>
 
 **Plataforma de Mentorías Universitarias** — Marketplace que conecta estudiantes con egresados para orientación profesional.
 
