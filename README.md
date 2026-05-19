@@ -55,6 +55,8 @@ UniMentor is an EdTech platform that connects university students with graduates
 
 The project follows **Atomic Design** methodology, organizing UI components into four clearly separated layers:
 
+![Architecture Diagram](docs/arquitectura/arquitectura-sistema.png)
+
 ```
 src/
 ├── components/

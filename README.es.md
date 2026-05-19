@@ -55,6 +55,8 @@ UniMentor es una plataforma EdTech que facilita la conexión entre estudiantes u
 
 El proyecto sigue la metodología **Atomic Design**, organizando los componentes en cuatro capas claramente separadas:
 
+![Diagrama de Arquitectura](docs/arquitectura/arquitectura-sistema.png)
+
 ```
 src/
 ├── components/
