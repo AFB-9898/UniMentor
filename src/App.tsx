@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import RatingStars from "./components/atoms/RatingStars";
 import SearchFilterBar from "./components/molecules/SearchFilterBar";
 import UserProfileCard from "./components/organisms/UserProfileCard";
+import SessionBookingForm from "./components/organisms/SessionBookingForm";
 import type { Mentor } from "./types";
 
 const mockMentors: Mentor[] = [
@@ -79,6 +80,11 @@ function HomePage() {
         {filteredMentors.length === 0 && (
           <p className="text-gray-400 text-center py-8">No hay mentores que coincidan con los filtros</p>
         )}
+      </section>
+
+      {/* SessionBookingForm — demo con validación */}
+      <section className="max-w-md mx-auto">
+        <SessionBookingForm mentors={mockMentors} />
       </section>
     </div>
   );
