@@ -61,8 +61,9 @@ export default function SearchFilterBar({
       {/* Filtros dinámicos */}
       {fields.map((field) => (
         <div key={field.key} className="min-w-[150px]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+          <label htmlFor={`filter-${field.key}`} className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
           <select
+            id={`filter-${field.key}`}
             value={selectedFilters[field.key] || ""}
             onChange={(e) => handleFilter(field.key, e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"

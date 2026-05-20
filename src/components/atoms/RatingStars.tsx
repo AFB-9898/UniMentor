@@ -51,7 +51,8 @@ export default function RatingStars({
               ${interactive ? "cursor-pointer hover:scale-110 transition-transform" : ""}
               ${filled ? "text-amber-400" : "text-gray-300"}
             `}
-            aria-hidden
+            role={interactive ? "button" : undefined}
+            aria-label={`${star} estrella${star > 1 ? "s" : ""}`}
           >
             {filled ? "★" : "☆"}
           </span>
