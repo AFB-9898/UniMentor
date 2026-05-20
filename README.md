@@ -19,6 +19,14 @@
 
 ---
 
+## Preview
+
+| Landing Page | Mentor Search | Mentor Profile |
+|:---:|:---:|:---:|
+| ![Landing](docs/mockups/landing-page.png) | ![Search](docs/mockups/mentor-search.png) | ![Profile](docs/mockups/mentor-profile.png) |
+
+---
+
 ## Table of Contents
 
 - [What It Does](#what-it-does)
@@ -27,6 +35,7 @@
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 - [Project Structure](#project-structure)
+- [Author](#author)
 - [License](#license)
 
 ---
@@ -72,12 +81,6 @@ src/
 ├── theme/              # Theme configuration
 └── main.tsx            # App entry point
 ```
-
-### Preview
-
-| Landing Page | Mentor Search | Mentor Profile |
-|:---:|:---:|:---:|
-| ![Landing](docs/mockups/landing-page.png) | ![Search](docs/mockups/mentor-search.png) | ![Profile](docs/mockups/mentor-profile.png) |
 
 ---
 
@@ -176,6 +179,14 @@ UniMentor/
 ├── tsconfig.node.json
 └── README.md
 ```
+
+---
+
+## Author
+
+| Member | Role | GitHub |
+|--------|------|--------|
+| Abraham Flores Barrionuevo | Frontend Developer | [@AFB-9898](https://github.com/AFB-9898) |
 
 ---
 

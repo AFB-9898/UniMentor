@@ -47,5 +47,8 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# External reference repos
+/repo de diego/
+
 # Test
 coverage/
