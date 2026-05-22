@@ -25,8 +25,9 @@ Thumbs.db
 /Requisaitos*.docx
 /tarea.txt
 
-# Local LaTeX document (only final PDF will be uploaded)
+# Local LaTeX documents
 /doc-proyecto/
+/defensa/
 
 # AI / Tooling
 .atl/
