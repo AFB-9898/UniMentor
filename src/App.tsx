@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { SessionProvider } from "./hooks/SessionContext";
 import RatingStars from "./components/atoms/RatingStars";
 import SearchFilterBar from "./components/molecules/SearchFilterBar";
 import UserProfileCard from "./components/organisms/UserProfileCard";
-import SessionBookingForm from "./components/organisms/SessionBookingForm";
+import BookingPage from "./components/screens/BookingPage";
+import MySessionsPage from "./components/screens/MySessionsPage";
 import type { Mentor } from "./types";
 
 const mockMentors: Mentor[] = [
@@ -20,6 +22,7 @@ const filterFields = [
 function HomePage() {
   const [rating, setRating] = useState(0);
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const navigate = useNavigate();
 
   const filteredMentors = mockMentors.filter((m) => {
     if (filters.search && !m.name.toLowerCase().includes(filters.search.toLowerCase())) return false;
@@ -33,10 +36,18 @@ function HomePage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-3xl font-bold text-primary">UniMentor</h1>
-        <p className="text-gray-500">Plataforma de Mentorías Universitarias</p>
+      {/* Header con navegación */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-primary">UniMentor</h1>
+          <p className="text-gray-500">Plataforma de Mentorías Universitarias</p>
+        </div>
+        <Link
+          to="/my-sessions"
+          className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors"
+        >
+          📅 Mis Sesiones
+        </Link>
       </div>
 
       {/* RatingStars — demo interactiva */}
@@ -62,7 +73,7 @@ function HomePage() {
 
       {/* Resultados con UserProfileCard */}
       <section>
-        <h2 className="text-lg font-semibold mb-3">👤 UserProfileCard</h2>
+        <h2 className="text-lg font-semibold mb-3">👤 Mentores disponibles</h2>
         <div className="grid gap-4 md:grid-cols-2">
           {filteredMentors.map((mentor) => (
             <UserProfileCard
@@ -70,7 +81,10 @@ function HomePage() {
               user={mentor}
               variant="compact"
               actions={
-                <button className="px-4 py-1.5 bg-primary text-white text-sm rounded-md hover:bg-primary-dark transition-colors">
+                <button
+                  onClick={() => navigate(`/book/${mentor.id}`)}
+                  className="px-4 py-1.5 bg-primary text-white text-sm rounded-md hover:bg-primary-dark transition-colors"
+                >
                   Agendar sesión
                 </button>
               }
@@ -81,22 +95,21 @@ function HomePage() {
           <p className="text-gray-400 text-center py-8">No hay mentores que coincidan con los filtros</p>
         )}
       </section>
-
-      {/* SessionBookingForm — demo con validación */}
-      <section className="max-w-md mx-auto">
-        <SessionBookingForm mentors={mockMentors} />
-      </section>
     </div>
   );
 }
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-    </div>
+    <SessionProvider>
+      <div className="min-h-screen bg-gray-50 text-gray-900">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/book/:mentorId" element={<BookingPage />} />
+          <Route path="/my-sessions" element={<MySessionsPage />} />
+        </Routes>
+      </div>
+    </SessionProvider>
   );
 }
 
