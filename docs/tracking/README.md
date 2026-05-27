@@ -8,10 +8,10 @@
 
 | Prioridad | Total | Pendiente | En Progreso | Completada |
 |-----------|-------|-----------|-------------|------------|
-| 🔴 Alta | 5 | 3 | 0 | 2 |
+| 🔴 Alta | 5 | 2 | 0 | 3 |
 | 🟡 Media | 5 | 5 | 0 | 0 |
 | 🟢 Baja | 4 | 4 | 0 | 0 |
-| **Total** | **14** | **12** | **0** | **2** |
+| **Total** | **14** | **11** | **0** | **3** |
 
 ---
 
@@ -21,7 +21,7 @@
 |---|-------|--------|--------|---------|-------|
 | 5 | Configurar InsForge client y env vars | ✅ Completada | 2026-05-27 | 2026-05-27 | SDK instalado, `.env` configurado, proyecto creado en InsForge |
 | 1 | Crear tablas en InsForge | ✅ Completada | 2026-05-27 | 2026-05-27 | 4 tablas (users, mentors, students, sessions) + índices via migración |
-| 2 | Implementar seed data | ⏳ Pendiente | — | — | — |
+| 2 | Implementar seed data | ✅ Completada | 2026-05-27 | 2026-05-27 | 4 usuarios (3 mentores + 1 estudiante) + 4 sesiones de ejemplo |
 | 3 | Implementar capa de servicios | ⏳ Pendiente | — | — | — |
 | 4 | Login / Register | ⏳ Pendiente | — | — | — |
 
@@ -73,3 +73,15 @@
 - Migración aplicada con `insforge db migrations up --all`
 
 **Resultado:** Tablas verificadas ✅ | Issue #1 completada ✅
+
+### 2026-05-27 — Seed data (#2)
+
+**Issues trabajadas:** #2
+**Detalle:**
+- Creada migración SQL con datos de desarrollo
+- 3 mentores con specialties, rating y sesiones
+- 1 estudiante con universidad y carrera
+- 4 sesiones en distintos estados (completed, confirmed, pending, cancelled)
+- Verificado con queries SQL
+
+**Resultado:** Datos insertados ✅ | Issue #2 completada ✅
