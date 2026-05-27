@@ -32,6 +32,7 @@
 - [Qué Hace](#qué-hace)
 - [Stack Tecnológico](#stack-tecnológico)
 - [Arquitectura](#arquitectura)
+- [Estado del Proyecto](#estado-del-proyecto)
 - [Instalación](#instalación)
 - [Variables de Entorno](#variables-de-entorno)
 - [Estructura del Proyecto](#estructura-del-proyecto)
@@ -45,6 +46,12 @@
 UniMentor es una plataforma EdTech que facilita la conexión entre estudiantes universitarios y egresados dispuestos a brindar mentoría profesional. Los estudiantes encuentran orientación sobre su carrera, mientras que los egresados comparten su experiencia y fortalecen la comunidad universitaria.
 
 **Línea de producto:** Plataformas Educativas (EdTech) — Ingeniería de Software II.
+
+---
+
+## Estado del Proyecto
+
+Consultá el [tracking de avances](docs/tracking/README.md) para ver el progreso detallado issue por issue, con fechas y bitácora de cambios.
 
 ---
 

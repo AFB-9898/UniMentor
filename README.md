@@ -32,6 +32,7 @@
 - [What It Does](#what-it-does)
 - [Stack](#stack)
 - [Architecture](#architecture)
+- [Project Status](#project-status)
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 - [Project Structure](#project-structure)
@@ -81,6 +82,12 @@ src/
 ├── theme/              # Theme configuration
 └── main.tsx            # App entry point
 ```
+
+---
+
+## Project Status
+
+Check the [progress tracking](docs/tracking/README.md) for a detailed issue-by-issue status with dates and changelog.
 
 ---
 
