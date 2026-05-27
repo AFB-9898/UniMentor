@@ -8,10 +8,10 @@
 
 | Prioridad | Total | Pendiente | En Progreso | Completada |
 |-----------|-------|-----------|-------------|------------|
-| 🔴 Alta | 5 | 4 | 0 | 1 |
+| 🔴 Alta | 5 | 3 | 0 | 2 |
 | 🟡 Media | 5 | 5 | 0 | 0 |
 | 🟢 Baja | 4 | 4 | 0 | 0 |
-| **Total** | **14** | **13** | **0** | **1** |
+| **Total** | **14** | **12** | **0** | **2** |
 
 ---
 
@@ -20,7 +20,7 @@
 | # | Issue | Estado | Inicio | Término | Notas |
 |---|-------|--------|--------|---------|-------|
 | 5 | Configurar InsForge client y env vars | ✅ Completada | 2026-05-27 | 2026-05-27 | SDK instalado, `.env` configurado, proyecto creado en InsForge |
-| 1 | Crear tablas en InsForge | ⏳ Pendiente | — | — | — |
+| 1 | Crear tablas en InsForge | ✅ Completada | 2026-05-27 | 2026-05-27 | 4 tablas (users, mentors, students, sessions) + índices via migración |
 | 2 | Implementar seed data | ⏳ Pendiente | — | — | — |
 | 3 | Implementar capa de servicios | ⏳ Pendiente | — | — | — |
 | 4 | Login / Register | ⏳ Pendiente | — | — | — |
@@ -60,3 +60,16 @@
 - Build verificado ✅ (`npm run build` sin errores)
 
 **Resultado:** Build ✅ | Issue #5 completada ✅
+
+### 2026-05-27 — Creación de tablas en InsForge (#1)
+
+**Issues trabajadas:** #1
+**Detalle:**
+- Creada migración SQL `20260527050431_create-tables.sql` en `migrations/`
+- Tablas creadas: `users`, `mentors`, `students`, `sessions`
+- Índices: `idx_sessions_mentor_id`, `idx_sessions_student_id`, `idx_sessions_status`
+- Constraints: PKs, FKs, CHECKs, UNIQUEs
+- Verificado via CLI: `insforge db tables` e `insforge db indexes`
+- Migración aplicada con `insforge db migrations up --all`
+
+**Resultado:** Tablas verificadas ✅ | Issue #1 completada ✅
