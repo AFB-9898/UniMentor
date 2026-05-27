@@ -1,10 +1,10 @@
-# UniMentor — Data Architecture
+# UniMentor — Arquitectura de Datos
 
-> This document defines the data layer architecture: how the frontend connects to InsForge (BaaS), the service layer, database tables, and data flow patterns.
+> Este documento define la arquitectura de la capa de datos: cómo el frontend se conecta con InsForge (BaaS), la capa de servicios, las tablas de la base de datos y los patrones de flujo de datos.
 
 ---
 
-## Architecture Overview
+## Vista General de la Arquitectura
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
@@ -35,26 +35,26 @@
                       └───────────┘  └─────────────┘  └─────────┘
 ```
 
-**Key rule:** Components must never call InsForge directly. They talk to **services**, which use the InsForge client. This keeps the UI decoupled from the backend.
+**Regla clave:** Los componentes NUNCA llaman a InsForge directamente. Se comunican con **servicios**, que usan el cliente de InsForge. Esto mantiene la UI desacoplada del backend.
 
 ---
 
-## Service Layer
+## Capa de Servicios
 
-Each domain entity has a corresponding service that abstracts all data access. Services return Promises, so screens stay async-ready.
+Cada entidad de dominio tiene un servicio correspondiente que abstrae todo el acceso a datos. Los servicios devuelven Promises, así las pantallas quedan listas para operaciones asíncronas.
 
-| Service              | Responsibility                                |
-| -------------------- | --------------------------------------------- |
-| `mentorService`      | List mentors, get by ID, update profile       |
-| `studentService`     | Get/update student profile                    |
-| `sessionService`     | Create session, update status, list by user   |
-| `ratingService`      | Submit rating, get average                    |
-| `authService`        | Login, register, logout, get current user     |
+| Servicio            | Responsabilidad                                |
+| ------------------- | ---------------------------------------------- |
+| `mentorService`     | Listar mentores, obtener por ID, actualizar perfil |
+| `studentService`    | Obtener/actualizar perfil de estudiante        |
+| `sessionService`    | Crear sesión, actualizar estado, listar por usuario |
+| `ratingService`     | Enviar calificación, obtener promedio           |
+| `authService`       | Login, register, logout, obtener usuario actual |
 
-### Service Interface Pattern
+### Patrón de Interfaz de Servicio
 
 ```typescript
-// Each service defines an interface first
+// Cada servicio define una interfaz primero
 export interface MentorService {
   list(filters?: MentorFilters): Promise<Mentor[]>;
   getById(id: string): Promise<Mentor | null>;
@@ -62,73 +62,73 @@ export interface MentorService {
 }
 ```
 
-A **mock implementation** is used during development. When InsForge is ready, a **live implementation** replaces it — components never change.
+Una **implementación mock** se usa durante el desarrollo. Cuando InsForge esté listo, una **implementación real** la reemplaza — los componentes nunca cambian.
 
 ---
 
-## Database Tables (PostgreSQL via InsForge)
+## Tablas de la Base de Datos (PostgreSQL via InsForge)
 
 ### `users`
 
-Base identity for all platform users. Managed primarily through InsForge Auth.
+Identidad base para todos los usuarios de la plataforma. Gestionado principalmente por InsForge Auth.
 
-| Column       | Type         | Constraints               |
-| ------------ | ------------ | ------------------------- |
+| Columna      | Tipo         | Restricciones               |
+| ------------ | ------------ | --------------------------- |
 | `id`         | `uuid`       | PK, default `gen_random_uuid()` |
-| `email`      | `text`       | NOT NULL, UNIQUE           |
-| `name`       | `text`       | NOT NULL                   |
-| `role`       | `text`       | NOT NULL, CHECK (`'student'` or `'mentor'`) |
-| `avatar`     | `text`       | nullable (InsForge Storage URL) |
-| `bio`        | `text`       | nullable                   |
-| `created_at` | `timestamptz`| NOT NULL, default `NOW()`  |
+| `email`      | `text`       | NOT NULL, UNIQUE             |
+| `name`       | `text`       | NOT NULL                     |
+| `role`       | `text`       | NOT NULL, CHECK (`'student'` o `'mentor'`) |
+| `avatar`     | `text`       | nullable (URL de InsForge Storage) |
+| `bio`        | `text`       | nullable                     |
+| `created_at` | `timestamptz`| NOT NULL, default `NOW()`    |
 
 ### `mentors`
 
-Mentor-specific profile data. One-to-one with `users` (only for role = `'mentor'`).
+Datos específicos del perfil de mentor. Uno a uno con `users` (solo para rol = `'mentor'`).
 
-| Column          | Type         | Constraints               |
-| --------------- | ------------ | ------------------------- |
+| Columna          | Tipo         | Restricciones               |
+| --------------- | ------------ | --------------------------- |
 | `id`            | `uuid`       | PK, FK → `users.id` ON DELETE CASCADE |
-| `specialty`     | `text[]`     | NOT NULL, default `[]`     |
+| `specialty`     | `text[]`     | NOT NULL, default `[]`       |
 | `rating`        | `numeric(2,1)` | NOT NULL, default `0`, CHECK (0–5) |
-| `session_count` | `integer`    | NOT NULL, default `0`      |
-| `university`    | `text`       | nullable                   |
-| `career`        | `text`       | nullable                   |
+| `session_count` | `integer`    | NOT NULL, default `0`        |
+| `university`    | `text`       | nullable                     |
+| `career`        | `text`       | nullable                     |
 
 ### `students`
 
-Student-specific profile data. One-to-one with `users` (only for role = `'student'`).
+Datos específicos del perfil de estudiante. Uno a uno con `users` (solo para rol = `'student'`).
 
-| Column       | Type    | Constraints               |
-| ------------ | ------- | ------------------------- |
-| `id`         | `uuid`  | PK, FK → `users.id` ON DELETE CASCADE |
-| `university` | `text`  | NOT NULL                   |
-| `career`     | `text`  | NOT NULL                   |
+| Columna     | Tipo    | Restricciones               |
+| ----------- | ------- | --------------------------- |
+| `id`        | `uuid`  | PK, FK → `users.id` ON DELETE CASCADE |
+| `university`| `text`  | NOT NULL                     |
+| `career`    | `text`  | NOT NULL                     |
 
 ### `sessions`
 
-Core business entity — a mentorship booking linking a student and a mentor.
+Entidad central del negocio — una reserva de mentoría que vincula a un estudiante con un mentor.
 
-| Column       | Type          | Constraints               |
-| ------------ | ------------- | ------------------------- |
+| Columna      | Tipo          | Restricciones               |
+| ------------ | ------------- | --------------------------- |
 | `id`         | `uuid`        | PK, default `gen_random_uuid()` |
 | `mentor_id`  | `uuid`        | NOT NULL, FK → `mentors.id` |
 | `student_id` | `uuid`        | NOT NULL, FK → `students.id` |
 | `status`     | `text`        | NOT NULL, CHECK (`'pending'`, `'confirmed'`, `'completed'`, `'cancelled'`) |
-| `date`       | `date`        | NOT NULL                   |
-| `topic`      | `text`        | NOT NULL                   |
-| `notes`      | `text`        | nullable                   |
-| `rating`     | `smallint`    | nullable, CHECK (1–5)      |
-| `created_at` | `timestamptz` | NOT NULL, default `NOW()`  |
+| `date`       | `date`        | NOT NULL                     |
+| `topic`      | `text`        | NOT NULL                     |
+| `notes`      | `text`        | nullable                     |
+| `rating`     | `smallint`    | nullable, CHECK (1–5)        |
+| `created_at` | `timestamptz` | NOT NULL, default `NOW()`    |
 
-**Indexes:**
+**Índices:**
 - `idx_sessions_mentor_id` ON `sessions(mentor_id)`
 - `idx_sessions_student_id` ON `sessions(student_id)`
 - `idx_sessions_status` ON `sessions(status)`
 
 ---
 
-## Entity Relationships
+## Relaciones entre Entidades
 
 ```mermaid
 erDiagram
@@ -175,32 +175,18 @@ erDiagram
     students ||--o{ sessions : ""
 ```
 
-```text
-users (base)
-├── mentors (1:1) ──┐
-│                   │
-│     ┌─────────────┼──────────────────────┐
-│     │             │                      │
-│     │    sessions (N) ──── mentor_id     │
-│     │    sessions (N) ──── student_id    │
-│     │                                    │
-│     └────────────────────────────────────┘
-│
-└── students (1:1) ─┘
-```
+![Diagrama Entidad-Relación](arquitectura/er-diagram.png)
 
-**Relationship rules:**
-- A `user` has exactly one profile row (`mentors` or `students`) depending on their role.
-- A `mentor` can have many `sessions`.
-- A `student` can have many `sessions`.
-- A `session` belongs to exactly one `mentor` and one `student`.
-- A `session` can optionally have a `rating` (set when status becomes `completed`).
-
-![Entity-Relationship Diagram](arquitectura/er-diagram.png)
+**Reglas de relación:**
+- Un `user` tiene exactamente un perfil (`mentors` o `students`) según su rol.
+- Un `mentor` puede tener muchas `sessions`.
+- Un `student` puede tener muchas `sessions`.
+- Una `session` pertenece exactamente a un `mentor` y un `student`.
+- Una `session` puede tener opcionalmente un `rating` (se asigna cuando el estado pasa a `completed`).
 
 ---
 
-## Authentication Flow
+## Flujo de Autenticación
 
 ```text
 ┌──────────┐     ┌──────────────┐     ┌────────────┐
@@ -214,44 +200,44 @@ users (base)
                     └─────────────┘    └───────────┘
 ```
 
-1. User submits credentials → `authService.login(email, password)`
-2. InsForge Auth validates → returns a JWT token + user profile
-3. Token is stored (memory + httpOnly cookie recommended)
-4. `UserContext` provides current user to the entire app
-5. Protected routes check `UserContext` before rendering
+1. El usuario envía credenciales → `authService.login(email, password)`
+2. InsForge Auth valida → devuelve un JWT token + perfil de usuario
+3. El token se almacena (memoria + httpOnly cookie recomendado)
+4. `UserContext` provee el usuario actual a toda la app
+5. Las rutas protegidas verifican `UserContext` antes de renderizar
 
 ---
 
-## Data Flow Pattern
+## Patrón de Flujo de Datos
 
-Every data operation follows the same pattern:
+Toda operación de datos sigue el mismo patrón:
 
 ```text
 Screen / Component
     │
     ▼
-Service function call   (e.g. mentorService.list({ specialty: "React" }))
+Llamada a servicio   (ej. mentorService.list({ specialty: "React" }))
     │
     ▼
-InsForge client request  (e.g. GET /api/collections/mentors?filter=...)
+Petición al cliente InsForge  (ej. GET /api/collections/mentors?filter=...)
     │
     ▼
 InsForge API Gateway
     │
     ▼
-PostgreSQL query
+Consulta PostgreSQL
     │
     ▼
-Response → Service → Component (via state/context)
+Respuesta → Servicio → Componente (via state/context)
 ```
 
-**Loading & error states are handled at the service or hook level**, not in individual components.
+**Los estados de carga y error se manejan a nivel de servicio o hook**, no en componentes individuales.
 
 ---
 
-## Related Documents
+## Documentos Relacionados
 
-- [Domain Model](03-domain-model.md)
-- [Architecture](05-architecture.md)
-- [Tech Stack](04-tech-stack.md)
-- [Functional Specification](07-functional-specification.md)
+- [Modelo de Dominio](03-domain-model.es.md)
+- [Arquitectura](05-architecture.es.md)
+- [Stack Tecnológico](04-tech-stack.es.md)
+- [Especificación Funcional](07-functional-specification.es.md)
