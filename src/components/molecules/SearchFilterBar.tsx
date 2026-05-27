@@ -15,16 +15,6 @@ type SearchFilterBarProps = {
   onFilter: (filters: Record<string, string>) => void;
 };
 
-/**
- * SearchFilterBar — Barra de búsqueda + filtros dinámicos.
- *
- * Reutilización:
- * - Buscar mentores por nombre/especialidad
- * - Buscar estudiantes por universidad/carrera
- * - Filtrar historial de sesiones por estado/fecha
- *
- * Props: fields (config de filtros), onFilter (callback), placeholder
- */
 export default function SearchFilterBar({
   fields,
   placeholder = "Buscar...",

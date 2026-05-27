@@ -10,17 +10,7 @@ type UserProfileCardProps = {
   actions?: React.ReactNode;
 };
 
-/**
- * UserProfileCard — Tarjeta de perfil de usuario reutilizable.
- *
- * Reutilización:
- * - Resultados de búsqueda de mentores
- * - Perfil de mentor en detalle
- * - Dashboard del estudiante
- * - Lista de sesiones agendadas
- *
- * Props: user (Mentor|Student), variant (compact|detailed), actions
- */
+
 export default function UserProfileCard({
   user,
   variant = "compact",

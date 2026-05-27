@@ -15,16 +15,7 @@ const sizeMap = {
   lg: "text-4xl",
 };
 
-/**
- * RatingStars — Componente reutilizable de calificación por estrellas.
- *
- * Reutilización:
- * - Vista de perfil de mentor (mostrar rating promedio)
- * - Feedback post-sesión (calificar al mentor)
- * - Reseñas en el marketplace
- *
- * Props: value, interactive, onChange, size
- */
+
 export default function RatingStars({
   value,
   interactive = false,
