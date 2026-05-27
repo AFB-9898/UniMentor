@@ -1,0 +1,72 @@
+import type { Mentor } from "../types";
+
+export interface MentorFilters {
+  search?: string;
+  specialty?: string;
+  minRating?: number;
+}
+
+export interface MentorService {
+  list(filters?: MentorFilters): Promise<Mentor[]>;
+  getById(id: string): Promise<Mentor | null>;
+}
+
+const mockMentors: Mentor[] = [
+  {
+    id: "1",
+    name: "Carlos Mendoza",
+    email: "carlos@ejemplo.com",
+    role: "mentor",
+    specialty: ["React", "TypeScript"],
+    rating: 4,
+    sessionCount: 23,
+    createdAt: "2026-01-15",
+  },
+  {
+    id: "2",
+    name: "María García",
+    email: "maria@ejemplo.com",
+    role: "mentor",
+    specialty: ["UX Design", "Figma"],
+    rating: 5,
+    sessionCount: 45,
+    createdAt: "2025-11-20",
+  },
+  {
+    id: "3",
+    name: "Luis Torres",
+    email: "luis@ejemplo.com",
+    role: "mentor",
+    specialty: ["Node.js", "PostgreSQL"],
+    rating: 3,
+    sessionCount: 12,
+    createdAt: "2026-03-08",
+  },
+];
+
+function applyFilters(mentors: Mentor[], filters?: MentorFilters): Mentor[] {
+  if (!filters) return mentors;
+
+  return mentors.filter((m) => {
+    if (filters.search && !m.name.toLowerCase().includes(filters.search.toLowerCase())) {
+      return false;
+    }
+    if (filters.specialty && !m.specialty.includes(filters.specialty)) {
+      return false;
+    }
+    if (filters.minRating !== undefined && m.rating < filters.minRating) {
+      return false;
+    }
+    return true;
+  });
+}
+
+export const mockMentorService: MentorService = {
+  async list(filters) {
+    return applyFilters(mockMentors, filters);
+  },
+
+  async getById(id) {
+    return mockMentors.find((m) => m.id === id) ?? null;
+  },
+};

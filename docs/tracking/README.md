@@ -8,10 +8,10 @@
 
 | Prioridad | Total | Pendiente | En Progreso | Completada |
 |-----------|-------|-----------|-------------|------------|
-| 🔴 Alta | 5 | 2 | 0 | 3 |
+| 🔴 Alta | 5 | 1 | 0 | 4 |
 | 🟡 Media | 5 | 5 | 0 | 0 |
 | 🟢 Baja | 4 | 4 | 0 | 0 |
-| **Total** | **14** | **11** | **0** | **3** |
+| **Total** | **14** | **10** | **0** | **4** |
 
 ---
 
@@ -22,7 +22,7 @@
 | 5 | Configurar InsForge client y env vars | ✅ Completada | 2026-05-27 | 2026-05-27 | SDK instalado, `.env` configurado, proyecto creado en InsForge |
 | 1 | Crear tablas en InsForge | ✅ Completada | 2026-05-27 | 2026-05-27 | 4 tablas (users, mentors, students, sessions) + índices via migración |
 | 2 | Implementar seed data | ✅ Completada | 2026-05-27 | 2026-05-27 | 4 usuarios (3 mentores + 1 estudiante) + 4 sesiones de ejemplo |
-| 3 | Implementar capa de servicios | ⏳ Pendiente | — | — | — |
+| 3 | Implementar capa de servicios | ✅ Completada | 2026-05-27 | 2026-05-27 | TDD: 19 tests, 3 servicios (mentor, session, rating) |
 | 4 | Login / Register | ⏳ Pendiente | — | — | — |
 
 ## 🟡 Prioridad Media
@@ -85,3 +85,18 @@
 - Verificado con queries SQL
 
 **Resultado:** Datos insertados ✅ | Issue #2 completada ✅
+
+### 2026-05-27 — Service layer con TDD (#3)
+
+**Issues trabajadas:** #3
+**Detalle:**
+- 🟥 Escritos tests primero (RED): mentorService (7 tests), sessionService (6 tests), ratingService (6 tests)
+- 🟩 Implementados servicios mock (GREEN)
+- mentorService: list con filtros (search, specialty, minRating), getById
+- sessionService: create, getById, listByUser, updateStatus
+- ratingService: submitRating (valida BR-01, BR-02, BR-03), getAverage
+- Test para InsForge client existente
+
+**TDD:** ✅ Tests escritos antes de la implementación
+**Tests totales:** 46 pasando (19 nuevos)
+**Build:** ✅
