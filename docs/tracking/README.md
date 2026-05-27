@@ -8,10 +8,10 @@
 
 | Prioridad | Total | Pendiente | En Progreso | Completada |
 |-----------|-------|-----------|-------------|------------|
-| 🔴 Alta | 5 | 5 | 0 | 0 |
+| 🔴 Alta | 5 | 4 | 0 | 1 |
 | 🟡 Media | 5 | 5 | 0 | 0 |
 | 🟢 Baja | 4 | 4 | 0 | 0 |
-| **Total** | **14** | **14** | **0** | **0** |
+| **Total** | **14** | **13** | **0** | **1** |
 
 ---
 
@@ -19,7 +19,7 @@
 
 | # | Issue | Estado | Inicio | Término | Notas |
 |---|-------|--------|--------|---------|-------|
-| 5 | Configurar InsForge client y env vars | ⏳ Pendiente | — | — | — |
+| 5 | Configurar InsForge client y env vars | ✅ Completada | 2026-05-27 | 2026-05-27 | SDK instalado, `.env` configurado, proyecto creado en InsForge |
 | 1 | Crear tablas en InsForge | ⏳ Pendiente | — | — | — |
 | 2 | Implementar seed data | ⏳ Pendiente | — | — | — |
 | 3 | Implementar capa de servicios | ⏳ Pendiente | — | — | — |
@@ -48,12 +48,15 @@
 
 ## 📝 Bitácora de Avances
 
-<!-- Formato para cada entrada:
-### YYYY-MM-DD — Título del avance
+### 2026-05-27 — Configuración de InsForge (#5)
 
-**Issues trabajadas:** #1, #2
-**Detalle:** Qué se hizo, decisiones tomadas, archivos modificados.
-**Resultado:** Build ✅ / Tests ✅ / Issues completadas ✅
--->
+**Issues trabajadas:** #5
+**Detalle:**
+- Instalado `@insforge/sdk@latest`
+- Creado proyecto `unimentor` en InsForge via CLI (us-east)
+- Configurado `.env` con `VITE_INSFORGE_URL` y `VITE_INSFORGE_ANON_KEY`
+- Actualizado `src/backend/client.ts` con cliente inicializado
+- Actualizado `.env.example` con las variables correctas
+- Build verificado ✅ (`npm run build` sin errores)
 
-*(Aún no hay avances registrados)*
+**Resultado:** Build ✅ | Issue #5 completada ✅
