@@ -1,76 +1,107 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import RatingStars from "../atoms/RatingStars";
+import { mockMentorService } from "../../services/mentorService";
 import { useSessions } from "../../hooks/SessionContext";
+import { useAuth } from "../../hooks/AuthContext";
+import RatingStars from "../atoms/RatingStars";
+import SessionBookingForm from "../organisms/SessionBookingForm";
 import type { Mentor } from "../../types";
-
-const mockMentors: Mentor[] = [
-  { id: "1", name: "Carlos Mendoza", email: "carlos@ejemplo.com", role: "mentor", specialty: ["React", "TypeScript"], rating: 4, sessionCount: 23, createdAt: "2026-01-15" },
-  { id: "2", name: "María García", email: "maria@ejemplo.com", role: "mentor", specialty: ["UX Design", "Figma"], rating: 5, sessionCount: 45, createdAt: "2025-11-20" },
-  { id: "3", name: "Luis Torres", email: "luis@ejemplo.com", role: "mentor", specialty: ["Node.js", "PostgreSQL"], rating: 3, sessionCount: 12, createdAt: "2026-03-08" },
-];
+import type { SessionFormData } from "../../shared/schemas/session.schema";
 
 export default function BookingPage() {
   const { mentorId } = useParams<{ mentorId: string }>();
   const navigate = useNavigate();
   const { addSession } = useSessions();
+  const { user } = useAuth();
 
-  const mentor = mockMentors.find((m) => m.id === mentorId);
+  const [mentor, setMentor] = useState<Mentor | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [topic, setTopic] = useState("");
-  const [date, setDate] = useState("");
-  const [notes, setNotes] = useState("");
-  const [error, setError] = useState("");
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    if (!topic.trim()) {
-      setError("El tema es obligatorio");
+  useEffect(() => {
+    if (!mentorId) {
+      setLoading(false);
       return;
     }
-    if (topic.trim().length < 5) {
-      setError("El tema debe tener al menos 5 caracteres");
-      return;
-    }
-    if (!date) {
-      setError("Seleccioná una fecha");
-      return;
-    }
+    mockMentorService.getById(mentorId).then((result) => {
+      setMentor(result);
+      setLoading(false);
+    });
+  }, [mentorId]);
+
+  function handleSubmit(data: SessionFormData) {
+    if (!user) return;
+
+    setIsSubmitting(true);
 
     addSession({
-      mentorId: mentorId!,
-      studentId: "student-1",
+      mentorId: data.mentorId,
+      studentId: user.id,
       status: "pending",
-      topic: topic.trim(),
-      date,
-      notes: notes.trim() || undefined,
+      topic: data.topic,
+      date: data.date,
+      notes: data.notes,
     });
 
     navigate("/my-sessions");
   }
 
-  if (!mentor) {
+  /* ── Loading ── */
+  if (loading) {
     return (
-      <div className="max-w-xl mx-auto p-6 text-center">
-        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300">Mentor no encontrado</h2>
-        <p className="text-gray-500 dark:text-gray-400 mt-2">El mentor que buscas no existe.</p>
-        <Link to="/" className="mt-4 inline-block text-primary hover:underline">
-          Volver al inicio
-        </Link>
+      <div className="max-w-2xl mx-auto p-6">
+        <div className="animate-pulse space-y-6">
+          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded" />
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-gray-200 dark:bg-gray-700" />
+              <div className="space-y-2 flex-1">
+                <div className="h-5 w-48 bg-gray-200 dark:bg-gray-700 rounded" />
+                <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded" />
+              </div>
+            </div>
+          </div>
+          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+        </div>
       </div>
     );
   }
 
+  /* ── Not found ── */
+  if (!mentor) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 text-center">
+        <div className="bg-white dark:bg-gray-800 p-12 rounded-lg border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300">
+            Mentor no encontrado
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400 mt-2">
+            El mentor que buscas no existe.
+          </p>
+          <Link
+            to="/"
+            className="mt-6 inline-block px-6 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
+          >
+            Volver al inicio
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const mentors = [mentor]; // para SessionBookingForm
+
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
-      {/* Navegación */}
-      <nav className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
         <Link to="/" className="hover:text-primary transition-colors">
           ← Inicio
         </Link>
         <span>/</span>
-        <span className="text-gray-900 dark:text-gray-100 font-medium">{mentor.name}</span>
+        <span className="text-gray-900 dark:text-gray-100 font-medium">
+          {mentor.name}
+        </span>
       </nav>
 
       {/* Info del mentor */}
@@ -80,7 +111,9 @@ export default function BookingPage() {
             {mentor.name.charAt(0)}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{mentor.name}</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+              {mentor.name}
+            </h1>
             <div className="flex items-center gap-2 mt-1">
               <RatingStars value={mentor.rating} size="sm" />
               <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -101,69 +134,13 @@ export default function BookingPage() {
         </div>
       </div>
 
-      {/* Formulario */}
-      <form
+      {/* Formulario de agendamiento */}
+      <SessionBookingForm
+        mentors={mentors}
+        defaultMentorId={mentor.id}
         onSubmit={handleSubmit}
-        className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 space-y-4"
-      >
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Agendar Sesión</h2>
-
-        {/* Tema */}
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Tema de la sesión</label>
-          <input
-            type="text"
-            value={topic}
-            onChange={(e) => { setTopic(e.target.value); setError(""); }}
-            placeholder="Ej: Consultoría sobre arquitectura React"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
-          />
-        </div>
-
-        {/* Fecha */}
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => { setDate(e.target.value); setError(""); }}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
-          />
-        </div>
-
-        {/* Notas */}
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notas (opcional)</label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Comentarios adicionales..."
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent resize-none"
-          />
-        </div>
-
-        {/* Error */}
-        {error && (
-          <p className="text-sm text-red-500">{error}</p>
-        )}
-
-        {/* Botones */}
-        <div className="flex gap-3 pt-2">
-          <Link
-            to="/"
-            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            Cancelar
-          </Link>
-          <button
-            type="submit"
-            className="flex-1 px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
-          >
-            Confirmar sesión
-          </button>
-        </div>
-      </form>
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 }

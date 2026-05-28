@@ -7,27 +7,45 @@ import type { Mentor } from "../../types";
 
 type SessionBookingFormProps = {
   mentors: Mentor[];
+  /** Si se pasa, preselecciona el mentor y oculta el selector */
+  defaultMentorId?: string;
+  /** Callback llamado con los datos validados del form */
+  onSubmit: (data: SessionFormData) => void;
+  /** Estado de envío para deshabilitar el botón */
+  isSubmitting?: boolean;
 };
 
 /**
- * SessionBookingForm — Formulario de agendamiento con validación.
+ * SessionBookingForm — Formulario de agendamiento con validación RHF + Zod.
  *
- * Demuestra el uso de React Hook Form + Zod + componentes reutilizables.
+ * Dos modos:
+ * - Con `defaultMentorId`: oculta el selector de mentores (útil desde BookingPage)
+ * - Sin `defaultMentorId`: muestra selector completo de mentores
  */
-export default function SessionBookingForm({ mentors }: SessionBookingFormProps) {
+export default function SessionBookingForm({
+  mentors,
+  defaultMentorId,
+  onSubmit: externalOnSubmit,
+  isSubmitting = false,
+}: SessionBookingFormProps) {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SessionFormData>({
     resolver: zodResolver(sessionFormSchema),
+    defaultValues: defaultMentorId ? { mentorId: defaultMentorId } : undefined,
   });
 
   function onSubmit(data: SessionFormData) {
-    alert(`Solicitud enviada:\nMentor: ${data.mentorId}\nTema: ${data.topic}\nFecha: ${data.date}`);
+    externalOnSubmit(data);
     reset();
   }
+
+  const selectedMentor = defaultMentorId
+    ? mentors.find((m) => m.id === defaultMentorId)
+    : null;
 
   const mentorOptions = mentors.map((m) => ({
     value: m.id,
@@ -37,18 +55,32 @@ export default function SessionBookingForm({ mentors }: SessionBookingFormProps)
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-white p-6 rounded-lg border border-gray-200 space-y-4"
+      className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 space-y-4"
       noValidate
     >
-      <h2 className="text-lg font-semibold mb-3">📅 Agendar Sesión</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+        📅 Agendar Sesión
+      </h2>
 
-      <Select
-        label="Mentor"
-        error={errors.mentorId?.message}
-        options={mentorOptions}
-        placeholder="Seleccioná un mentor..."
-        registration={register("mentorId")}
-      />
+      {defaultMentorId && selectedMentor ? (
+        <div className="flex flex-col gap-1">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Mentor
+          </label>
+          <p className="text-sm text-gray-900 dark:text-gray-100 font-medium px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700">
+            {selectedMentor.name}
+          </p>
+          <input type="hidden" {...register("mentorId")} />
+        </div>
+      ) : (
+        <Select
+          label="Mentor"
+          error={errors.mentorId?.message}
+          options={mentorOptions}
+          placeholder="Seleccioná un mentor..."
+          registration={register("mentorId")}
+        />
+      )}
 
       <Input
         label="Tema de la sesión"

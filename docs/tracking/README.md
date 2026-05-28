@@ -9,9 +9,9 @@
 | Prioridad | Total | Pendiente | En Progreso | Completada |
 |-----------|-------|-----------|-------------|------------|
 | 🔴 Alta | 6 | 0 | 0 | 6 |
-| 🟡 Media | 6 | 2 | 0 | 4 |
+| 🟡 Media | 6 | 1 | 0 | 5 |
 | 🟢 Baja | 4 | 3 | 1 | 0 |
-| **Total** | **16** | **5** | **1** | **10** |
+| **Total** | **16** | **4** | **1** | **11** |
 
 ---
 
@@ -35,7 +35,7 @@
 | 7 | MentorProfilePage | ✅ Completada | 2026-05-28 | 2026-05-28 | Pantalla /mentor/:id con perfil completo, bio, loading/404 states, breadcrumb |
 | 8 | RatingPage | ✅ Completada | 2026-05-28 | 2026-05-28 | Pantalla /rate/:id con flujo completo: form, confirmación, estados de error |
 | 9 | Student Dashboard | ✅ Completada | 2026-05-28 | 2026-05-28 | Dashboard de estudiante con stats, búsqueda, cards de mentores, sin secciones demo |
-| 10 | Unificar BookingPage con SessionBookingForm | ⏳ Pendiente | — | — | — |
+| 10 | Unificar BookingPage con SessionBookingForm | ✅ Completada | 2026-05-28 | 2026-05-28 | BookingPage usa SessionBookingForm con RHF+Zod, dark mode, sin datos duplicados |
 
 ## 🟢 Prioridad Baja
 
@@ -232,3 +232,20 @@
   - No autenticado → HomePage público con demos
 
 **Build:** ✅ | **Tests:** 53 pasando ✅ | **Issue #9 completada** ✅
+
+### 2026-05-28 — Unificar BookingPage con SessionBookingForm (#10)
+
+**Issues trabajadas:** #10
+**Detalle:**
+- Refactorizado `SessionBookingForm`:
+  - Nuevo prop `defaultMentorId`: preselecciona mentor y oculta el selector
+  - Nuevo prop `onSubmit`: callback en vez de `alert()`
+  - Dark mode en form y labels
+- `BookingPage` reescrita:
+  - Usa `SessionBookingForm` con RHF + Zod en vez de useState inline
+  - Mentor obtenido via `mockMentorService.getById()` (sin datos duplicados)
+  - Estados: loading (skeleton) y mentor no encontrado (404)
+  - Submit → `addSession` de SessionContext → navega a MySessions
+- Componentes compartidos (`Input`, `Select`, `FormField`) con dark mode
+
+**Build:** ✅ | **Tests:** 53 pasando ✅ | **Issue #10 completada** ✅
