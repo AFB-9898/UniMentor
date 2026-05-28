@@ -8,10 +8,10 @@
 
 | Prioridad | Total | Pendiente | En Progreso | Completada |
 |-----------|-------|-----------|-------------|------------|
-| 🔴 Alta | 5 | 0 | 0 | 5 |
-| 🟡 Media | 6 | 4 | 0 | 2 |
+| 🔴 Alta | 6 | 0 | 0 | 6 |
+| 🟡 Media | 6 | 2 | 0 | 4 |
 | 🟢 Baja | 4 | 3 | 1 | 0 |
-| **Total** | **15** | **7** | **1** | **7** |
+| **Total** | **16** | **5** | **1** | **10** |
 
 ---
 
@@ -24,6 +24,7 @@
 | 2 | Implementar seed data | ✅ Completada | 2026-05-27 | 2026-05-27 | 4 usuarios (3 mentores + 1 estudiante) + 4 sesiones de ejemplo |
 | 3 | Implementar capa de servicios | ✅ Completada | 2026-05-27 | 2026-05-27 | TDD: 19 tests, 3 servicios (mentor, session, rating) |
 | 4 | Login / Register | ✅ Completada | 2026-05-27 | 2026-05-28 | LoginPage, RegisterPage, authService + tests, AuthContext, ProtectedRoute |
+| 18 | Mentor Dashboard | ✅ Completada | 2026-05-28 | 2026-05-28 | Dashboard de mentor con stats, sesiones próximas, redirección inteligente por rol |
 
 ## 🟡 Prioridad Media
 
@@ -31,9 +32,9 @@
 |---|-------|--------|--------|---------|-------|
 | 6 | Proteger rutas por rol | ✅ Completada | 2026-05-27 | 2026-05-28 | ProtectedRoute con roles, PublicOnlyRoute, redirección a /login |
 | 16 | Dark/Light mode toggle | ✅ Completada | 2026-05-28 | 2026-05-28 | ThemeProvider conectado, ThemeToggle, localStorage + prefers-color-scheme |
-| 7 | MentorProfilePage | ⏳ Pendiente | — | — | — |
-| 8 | RatingPage | ⏳ Pendiente | — | — | — |
-| 9 | Dashboard del estudiante | ⏳ Pendiente | — | — | — |
+| 7 | MentorProfilePage | ✅ Completada | 2026-05-28 | 2026-05-28 | Pantalla /mentor/:id con perfil completo, bio, loading/404 states, breadcrumb |
+| 8 | RatingPage | ✅ Completada | 2026-05-28 | 2026-05-28 | Pantalla /rate/:id con flujo completo: form, confirmación, estados de error |
+| 9 | Student Dashboard | ✅ Completada | 2026-05-28 | 2026-05-28 | Dashboard de estudiante con stats, búsqueda, cards de mentores, sin secciones demo |
 | 10 | Unificar BookingPage con SessionBookingForm | ⏳ Pendiente | — | — | — |
 
 ## 🟢 Prioridad Baja
@@ -160,4 +161,74 @@
 
 **Tests:** 53 pasando (9 suites, +7 nuevos de authService)
 **Build:** ✅ (`npm run build` sin errores)
-**Pendiente:** Working tree sin committear — auth + theme + routing
+
+### 2026-05-28 — MentorProfilePage (#7)
+
+**Issues trabajadas:** #7
+**Detalle:**
+- Creado `src/components/screens/MentorProfilePage.tsx` en `/mentor/:mentorId`
+- Usa `mockMentorService.getById()` para obtener datos
+- Breadcrumb de navegación (Inicio → Nombre del mentor)
+- `UserProfileCard` en variante `detailed` para el header del perfil
+- Sección de biografía con texto completo
+- Sección de especialidades con badges
+- Estados: loading (skeleton animado), no encontrado (404 con link a inicio)
+- Botón "Agendar sesión" que navega a `/book/:mentorId`
+- Link "Ver perfil" agregado desde las tarjetas de HomePage
+- Agregados `bio` a los datos mock de mentores en `mentorService.ts`
+
+**Build:** ✅ | **Tests:** 53 pasando ✅ | **Issue #7 completada** ✅
+
+### 2026-05-28 — RatingPage (#8)
+
+**Issues trabajadas:** #8
+**Detalle:**
+- Creado `src/components/screens/RatingPage.tsx` en `/rate/:sessionId`
+- Ruta protegida para estudiantes (`ProtectedRoute roles={["student"]}`)
+- Fetch de sesión via `mockSessionService.getById()` + mentor via `mockMentorService.getById()`
+- `RatingStars` interactivo (1-5) con labels textuales (Muy malo → Excelente)
+- Estados manejados: loading (skeleton), no encontrado, no completada, ya calificada, form, submitting, error, success
+- Submit via `mockRatingService.submitRating()` que valida BR-01, BR-02, BR-03
+- Confirmación visual con estrellas + puntuación
+- Botón "Calificar sesión" agregado en `MySessionsPage` para sesiones completadas sin rating
+- `SessionContext`: ahora carga sesiones semilla al montar + función `rateSession` para mantener estado local sincronizado
+- Removido `rating: 4` de la sesión semilla #1 para que sea calificable en demo
+
+**Build:** ✅ | **Tests:** 53 pasando ✅ | **Issue #8 completada** ✅
+
+### 2026-05-28 — Mentor Dashboard + redirección por rol (#18)
+
+**Issues trabajadas:** #18
+**Detalle:**
+- Creado `src/components/screens/MentorDashboard.tsx` en `/dashboard`
+- Ruta protegida para mentores (`ProtectedRoute roles={["mentor"]}`)
+- Muestra perfil del mentor (nombre, email, especialidades, rating)
+- Stats rápidas: próximas sesiones, completadas, calificación
+- Lista de sesiones próximas con estado y fecha
+- Link a perfil público (`/mentor/:id`)
+- **Redirección inteligente en HomePage:**
+  - Mentor autenticado → redirige a `/dashboard`
+  - Estudiante o no autenticado → marketplace actual
+  - Estado loading mientras resuelve auth
+- Creada issue #18 en GitHub
+
+**Build:** ✅ | **Tests:** 53 pasando ✅ | **Issue #18 completada** ✅
+
+### 2026-05-28 — Student Dashboard (#9)
+
+**Issues trabajadas:** #9
+**Detalle:**
+- Creado `src/components/screens/StudentDashboard.tsx`
+- Se muestra en `/` para estudiantes autenticados
+- Mensaje de bienvenida con el nombre del estudiante
+- Stats: próximas sesiones, completadas, mentores disponibles
+- Búsqueda y filtrado de mentores (SearchFilterBar)
+- Tarjetas de mentores con acciones "Ver perfil" y "Agendar sesión"
+- Navegación a Mis Sesiones
+- HomePage público se conserva para usuarios no autenticados con secciones demo
+- Redirección por rol actualizada:
+  - Mentor → `/dashboard`
+  - Estudiante → StudentDashboard en `/`
+  - No autenticado → HomePage público con demos
+
+**Build:** ✅ | **Tests:** 53 pasando ✅ | **Issue #9 completada** ✅

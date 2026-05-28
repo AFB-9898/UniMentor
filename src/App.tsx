@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import { SessionProvider } from "./hooks/SessionContext";
@@ -12,6 +12,10 @@ import BookingPage from "./components/screens/BookingPage";
 import MySessionsPage from "./components/screens/MySessionsPage";
 import LoginPage from "./components/screens/LoginPage";
 import RegisterPage from "./components/screens/RegisterPage";
+import MentorProfilePage from "./components/screens/MentorProfilePage";
+import RatingPage from "./components/screens/RatingPage";
+import MentorDashboard from "./components/screens/MentorDashboard";
+import StudentDashboard from "./components/screens/StudentDashboard";
 import type { Mentor } from "./types";
 
 const mockMentors: Mentor[] = [
@@ -119,12 +123,20 @@ function HomePage() {
               user={mentor}
               variant="compact"
               actions={
-                <button
-                  onClick={() => navigate(`/book/${mentor.id}`)}
-                  className="px-4 py-1.5 bg-primary text-white text-sm rounded-md hover:bg-primary-dark transition-colors"
-                >
-                  Agendar sesión
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/mentor/${mentor.id}`)}
+                    className="px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Ver perfil
+                  </button>
+                  <button
+                    onClick={() => navigate(`/book/${mentor.id}`)}
+                    className="px-4 py-1.5 bg-primary text-white text-sm rounded-md hover:bg-primary-dark transition-colors"
+                  >
+                    Agendar sesión
+                  </button>
+                </div>
               }
             />
           ))}
@@ -137,12 +149,48 @@ function HomePage() {
   );
 }
 
+function HomePageRouter() {
+  const { user, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  // Once auth is resolved, redirect mentors to their dashboard
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user?.role === "mentor") {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, isAuthenticated, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Authenticated students see the student dashboard
+  if (isAuthenticated && user?.role === "student") {
+    return <StudentDashboard />;
+  }
+
+  // Unauthenticated users see the public homepage with demo sections
+  return <HomePage />;
+}
+
 function AppContent() {
   return (
     <SessionProvider>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePageRouter />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute roles={["mentor"]}>
+                <MentorDashboard />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
           <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
           <Route
@@ -150,6 +198,18 @@ function AppContent() {
             element={
               <ProtectedRoute roles={["student"]}>
                 <BookingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mentor/:mentorId"
+            element={<MentorProfilePage />}
+          />
+          <Route
+            path="/rate/:sessionId"
+            element={
+              <ProtectedRoute roles={["student"]}>
+                <RatingPage />
               </ProtectedRoute>
             }
           />

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSessions } from "../../hooks/SessionContext";
 import { formatDate } from "../../utils/formatDate";
+import RatingStars from "../atoms/RatingStars";
 
 const statusLabels: Record<string, string> = {
   pending: "Pendiente",
@@ -95,6 +96,25 @@ export default function MySessionsPage() {
                   <span>📅 {formatDate(session.date)}</span>
                   <span>🆔 #{session.id}</span>
                 </div>
+
+                {/* Rating indicator */}
+                {session.status === "completed" && (
+                  <div className="mt-3">
+                    {session.rating !== undefined ? (
+                      <div className="flex items-center gap-2">
+                        <RatingStars value={session.rating} size="sm" />
+                        <span className="text-xs text-gray-400">Calificado</span>
+                      </div>
+                    ) : (
+                      <Link
+                        to={`/rate/${session.id}`}
+                        className="inline-block px-3 py-1 bg-secondary/10 text-secondary-dark text-xs font-medium rounded-md hover:bg-secondary/20 transition-colors"
+                      >
+                        Calificar sesión
+                      </Link>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}

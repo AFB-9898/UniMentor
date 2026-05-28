@@ -25,7 +25,6 @@ const sessions: Session[] = [
     date: "2026-05-20",
     topic: "Introducción a React con TypeScript",
     notes: "El mentor me explicó los fundamentos.",
-    rating: 4,
     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
