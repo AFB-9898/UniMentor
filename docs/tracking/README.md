@@ -10,8 +10,9 @@
 |-----------|-------|-----------|-------------|------------|
 | 🔴 Alta | 6 | 0 | 0 | 6 |
 | 🟡 Media | 6 | 1 | 0 | 5 |
+| 🟡 Media | 8 | 2 | 0 | 6 |
 | 🟢 Baja | 4 | 3 | 1 | 0 |
-| **Total** | **16** | **4** | **1** | **11** |
+| **Total** | **18** | **6** | **1** | **11** |
 
 ---
 
@@ -36,6 +37,8 @@
 | 8 | RatingPage | ✅ Completada | 2026-05-28 | 2026-05-28 | Pantalla /rate/:id con flujo completo: form, confirmación, estados de error |
 | 9 | Student Dashboard | ✅ Completada | 2026-05-28 | 2026-05-28 | Dashboard de estudiante con stats, búsqueda, cards de mentores, sin secciones demo |
 | 10 | Unificar BookingPage con SessionBookingForm | ✅ Completada | 2026-05-28 | 2026-05-28 | BookingPage usa SessionBookingForm con RHF+Zod, dark mode, sin datos duplicados |
+| 19 | Edición inline de perfil de mentor | ⏳ Pendiente | — | — | Editar bio y especialidades desde el perfil público propio |
+| 20 | Vista de sesiones del mentor | ⏳ Pendiente | — | — | Pantalla /mentor-sessions con nombres de estudiantes |
 
 ## 🟢 Prioridad Baja
 
