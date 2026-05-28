@@ -53,8 +53,8 @@ export default function BookingPage() {
   if (!mentor) {
     return (
       <div className="max-w-xl mx-auto p-6 text-center">
-        <h2 className="text-2xl font-bold text-gray-700">Mentor no encontrado</h2>
-        <p className="text-gray-500 mt-2">El mentor que buscas no existe.</p>
+        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300">Mentor no encontrado</h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-2">El mentor que buscas no existe.</p>
         <Link to="/" className="mt-4 inline-block text-primary hover:underline">
           Volver al inicio
         </Link>
@@ -65,25 +65,25 @@ export default function BookingPage() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       {/* Navegación */}
-      <nav className="flex items-center gap-4 text-sm text-gray-500">
+      <nav className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
         <Link to="/" className="hover:text-primary transition-colors">
           ← Inicio
         </Link>
         <span>/</span>
-        <span className="text-gray-900 font-medium">{mentor.name}</span>
+        <span className="text-gray-900 dark:text-gray-100 font-medium">{mentor.name}</span>
       </nav>
 
       {/* Info del mentor */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-3">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 space-y-3">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xl font-bold">
             {mentor.name.charAt(0)}
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">{mentor.name}</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">{mentor.name}</h1>
             <div className="flex items-center gap-2 mt-1">
               <RatingStars value={mentor.rating} size="sm" />
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
                 {mentor.rating} · {mentor.sessionCount} sesiones
               </span>
             </div>
@@ -104,42 +104,42 @@ export default function BookingPage() {
       {/* Formulario */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-lg border border-gray-200 space-y-4"
+        className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 space-y-4"
       >
-        <h2 className="text-lg font-semibold">Agendar Sesión</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Agendar Sesión</h2>
 
         {/* Tema */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Tema de la sesión</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Tema de la sesión</label>
           <input
             type="text"
             value={topic}
             onChange={(e) => { setTopic(e.target.value); setError(""); }}
             placeholder="Ej: Consultoría sobre arquitectura React"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
           />
         </div>
 
         {/* Fecha */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Fecha</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha</label>
           <input
             type="date"
             value={date}
             onChange={(e) => { setDate(e.target.value); setError(""); }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
           />
         </div>
 
         {/* Notas */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Notas (opcional)</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Notas (opcional)</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Comentarios adicionales..."
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent resize-none"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent resize-none"
           />
         </div>
 
@@ -152,7 +152,7 @@ export default function BookingPage() {
         <div className="flex gap-3 pt-2">
           <Link
             to="/"
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md text-center hover:bg-gray-50 transition-colors"
+            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             Cancelar
           </Link>

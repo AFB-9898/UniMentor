@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import { SessionProvider } from "./hooks/SessionContext";
+import { ThemeProvider } from "./theme/ThemeProvider";
+import ThemeToggle from "./components/atoms/ThemeToggle";
+import { ProtectedRoute, PublicOnlyRoute } from "./shared/components/ProtectedRoute";
 import RatingStars from "./components/atoms/RatingStars";
 import SearchFilterBar from "./components/molecules/SearchFilterBar";
 import UserProfileCard from "./components/organisms/UserProfileCard";
 import BookingPage from "./components/screens/BookingPage";
 import MySessionsPage from "./components/screens/MySessionsPage";
+import LoginPage from "./components/screens/LoginPage";
+import RegisterPage from "./components/screens/RegisterPage";
 import type { Mentor } from "./types";
 
 const mockMentors: Mentor[] = [
@@ -23,6 +29,7 @@ function HomePage() {
   const [rating, setRating] = useState(0);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const filteredMentors = mockMentors.filter((m) => {
     if (filters.search && !m.name.toLowerCase().includes(filters.search.toLowerCase())) return false;
@@ -36,34 +43,65 @@ function HomePage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* Header con navegación */}
+      {/* Header con navegación y auth */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-primary">UniMentor</h1>
-          <p className="text-gray-500">Plataforma de Mentorías Universitarias</p>
+          <p className="text-gray-500 dark:text-gray-400">Plataforma de Mentorías Universitarias</p>
         </div>
-        <Link
-          to="/my-sessions"
-          className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-md hover:bg-gray-50 transition-colors"
-        >
-          📅 Mis Sesiones
-        </Link>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          {isAuthenticated ? (
+            <>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {user?.name}
+              </span>
+              <Link
+                to="/my-sessions"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Mis Sesiones
+              </Link>
+              <button
+                onClick={() => { logout(); navigate("/"); }}
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                Cerrar sesión
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/my-sessions"
+                className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Mis Sesiones
+              </Link>
+              <Link
+                to="/login"
+                className="px-4 py-2 bg-primary text-white text-sm rounded-md hover:bg-primary-dark transition-colors"
+              >
+                Iniciar sesión
+              </Link>
+            </>
+          )}
+        </div>
       </div>
 
       {/* RatingStars — demo interactiva */}
-      <section className="bg-white p-6 rounded-lg border border-gray-200">
-        <h2 className="text-lg font-semibold mb-3">⭐ RatingStars</h2>
-        <p className="text-sm text-gray-500 mb-3">Componente reutilizable de calificación.</p>
+      <section className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">⭐ RatingStars</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Componente reutilizable de calificación.</p>
         <div className="flex items-center gap-4">
           <RatingStars value={rating} interactive onChange={setRating} size="lg" />
-          <span className="text-sm text-gray-500">{rating} / 5</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">{rating} / 5</span>
         </div>
-        <p className="text-xs text-gray-400 mt-2">Hacé clic en las estrellas para calificar</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">Hacé clic en las estrellas para calificar</p>
       </section>
 
       {/* SearchFilterBar */}
       <section>
-        <h2 className="text-lg font-semibold mb-3">🔍 SearchFilterBar</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">🔍 SearchFilterBar</h2>
         <SearchFilterBar
           fields={filterFields}
           placeholder="Buscar mentor por nombre..."
@@ -73,7 +111,7 @@ function HomePage() {
 
       {/* Resultados con UserProfileCard */}
       <section>
-        <h2 className="text-lg font-semibold mb-3">👤 Mentores disponibles</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">👤 Mentores disponibles</h2>
         <div className="grid gap-4 md:grid-cols-2">
           {filteredMentors.map((mentor) => (
             <UserProfileCard
@@ -92,24 +130,50 @@ function HomePage() {
           ))}
         </div>
         {filteredMentors.length === 0 && (
-          <p className="text-gray-400 text-center py-8">No hay mentores que coincidan con los filtros</p>
+          <p className="text-gray-400 dark:text-gray-500 text-center py-8">No hay mentores que coincidan con los filtros</p>
         )}
       </section>
     </div>
   );
 }
 
-function App() {
+function AppContent() {
   return (
     <SessionProvider>
-      <div className="min-h-screen bg-gray-50 text-gray-900">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/book/:mentorId" element={<BookingPage />} />
-          <Route path="/my-sessions" element={<MySessionsPage />} />
+          <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+          <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
+          <Route
+            path="/book/:mentorId"
+            element={
+              <ProtectedRoute roles={["student"]}>
+                <BookingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-sessions"
+            element={
+              <ProtectedRoute>
+                <MySessionsPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </SessionProvider>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
