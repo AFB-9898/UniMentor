@@ -10,9 +10,9 @@
 |-----------|-------|-----------|-------------|------------|
 | 🔴 Alta | 6 | 0 | 0 | 6 |
 | 🟡 Media | 6 | 0 | 0 | 6 |
-| 🟡 Media | 8 | 2 | 0 | 6 |
+| 🟡 Media | 8 | 1 | 0 | 7 |
 | 🟢 Baja | 4 | 3 | 1 | 0 |
-| **Total** | **18** | **5** | **1** | **12** |
+| **Total** | **18** | **4** | **1** | **13** |
 
 ---
 
@@ -38,7 +38,7 @@
 | 9 | Student Dashboard | ✅ Completada | 2026-05-28 | 2026-05-28 | Dashboard de estudiante con stats, búsqueda, cards de mentores, sin secciones demo |
 | 10 | Unificar BookingPage con SessionBookingForm | ✅ Completada | 2026-05-28 | 2026-05-28 | BookingPage usa SessionBookingForm con RHF+Zod, dark mode, sin datos duplicados |
 | 19 | Edición inline de perfil de mentor | ✅ Completada | 2026-05-28 | 2026-05-28 | Editar bio y especialidades inline desde el perfil público propio. TDD, 74 tests |
-| 20 | Vista de sesiones del mentor | ⏳ Pendiente | — | — | Pantalla /mentor-sessions con nombres de estudiantes |
+| 20 | Vista de sesiones del mentor | ✅ Completada | 2026-05-28 | 2026-05-28 | Sessions con nombres de estudiantes. SessionContext usa auth real, listByUser filtra por rol. TDD, 85 tests |
 
 ## 🟢 Prioridad Baja
 
@@ -268,3 +268,23 @@
 - Tests TDD: 17 tests nuevos cubriendo R1-R8 (ownership, bio, specialties, save, cancel, loading, error, double-save)
 
 **Build:** ✅ | **Tests:** 74 pasando (10 suites) ✅ | **Issue #19 completada** ✅
+
+### 2026-05-28 — Mentor Sessions View with Student Names (#20)
+
+**Issues trabajadas:** #20
+**Detalle:**
+- Creado `src/services/userService.ts` con `getUserName(id)` y mapa de nombres + fallback
+- `sessionService.listByUser` corregido: filtra por `studentId` **O** `mentorId` (antes solo studentId)
+- `SessionContext` corregido:
+  - Ya no hardcodea `"student-1"` — usa `useAuth().user.id`
+  - Espera a que auth esté lista (`!isLoading`) antes de cargar sesiones
+  - Usuarios no autenticados no gatillan fetch
+- `MentorDashboard`: cada sesión próxima muestra el nombre del estudiante via `getUserName(session.studentId)`
+- `MySessionsPage`: muestra nombre condicional por rol
+  - Mentor → muestra nombre del estudiante
+  - Estudiante → muestra nombre del mentor (comportamiento original preservado)
+- Eliminado `mentorNames` hardcodeado de MySessionsPage (reemplazado por `getUserName`)
+- Tests TDD: 11 tests nuevos en 4 archivos, 85 tests totales
+- **Bug corregido**: el SessionContext cargaba sesiones de un estudiante fijo sin importar quién usaba la app
+
+**Build:** ✅ | **Tests:** 85 pasando (14 suites) ✅ | **Issue #20 completada** ✅

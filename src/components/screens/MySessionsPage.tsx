@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSessions } from "../../hooks/SessionContext";
+import { useAuth } from "../../hooks/AuthContext";
+import { getUserName } from "../../services/userService";
 import { formatDate } from "../../utils/formatDate";
 import RatingStars from "../atoms/RatingStars";
 
@@ -17,14 +19,9 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
 };
 
-const mentorNames: Record<string, string> = {
-  "1": "Carlos Mendoza",
-  "2": "María García",
-  "3": "Luis Torres",
-};
-
 export default function MySessionsPage() {
   const { sessions } = useSessions();
+  const { user } = useAuth();
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
@@ -74,16 +71,22 @@ export default function MySessionsPage() {
               key={session.id}
               className="bg-white dark:bg-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-700 flex items-start gap-4"
             >
-              {/* Avatar del mentor */}
+              {/* Avatar */}
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-lg font-bold shrink-0">
-                {(mentorNames[session.mentorId] || "?").charAt(0)}
+                {(
+                  user?.role === "student"
+                    ? getUserName(session.mentorId)
+                    : getUserName(session.studentId)
+                ).charAt(0)}
               </div>
 
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
-                    {mentorNames[session.mentorId] || "Mentor desconocido"}
+                    {user?.role === "student"
+                      ? getUserName(session.mentorId)
+                      : getUserName(session.studentId)}
                   </h3>
                   <span
                     className={`shrink-0 px-2.5 py-0.5 text-xs font-medium rounded-full ${statusColors[session.status] || "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"}`}

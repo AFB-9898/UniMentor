@@ -6,6 +6,7 @@ import { mockMentorService } from "../../services/mentorService";
 import { mockRatingService } from "../../services/ratingService";
 import RatingStars from "../atoms/RatingStars";
 import { formatDate } from "../../utils/formatDate";
+import { getUserName } from "../../services/userService";
 import type { Mentor } from "../../types";
 
 const statusLabels: Record<string, string> = {
@@ -213,6 +214,9 @@ export default function MentorDashboard() {
                 <div>
                   <p className="font-medium text-gray-900 dark:text-gray-100">
                     {session.topic}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+                    {getUserName(session.studentId)}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                     📅 {formatDate(session.date)}

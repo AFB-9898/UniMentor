@@ -52,6 +52,15 @@ describe("sessionService", () => {
     expect(updated.status).toBe("confirmed");
   });
 
+  it("lists sessions for a mentor by mentorId", async () => {
+    const { mockSessionService } = await import("./sessionService");
+    const sessions = await mockSessionService.listByUser("1");
+    expect(sessions.length).toBeGreaterThan(0);
+    sessions.forEach((s: Session) => {
+      expect(s.mentorId).toBe("1");
+    });
+  });
+
   it("returns sessions ordered by date descending", async () => {
     const { mockSessionService } = await import("./sessionService");
     const sessions = await mockSessionService.listByUser("student-1");

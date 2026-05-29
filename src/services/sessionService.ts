@@ -50,7 +50,7 @@ const sessions: Session[] = [
 export const mockSessionService: SessionService = {
   async listByUser(userId) {
     return sessions
-      .filter((s) => s.studentId === userId)
+      .filter((s) => s.studentId === userId || s.mentorId === userId)
       .sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),

@@ -9,3 +9,5 @@ export type { RatingService, RatingResult, MentorAverage } from "./ratingService
 
 export { mockAuthService } from "./authService";
 export type { AuthService, AuthCredentials, RegisterData, AuthResponse } from "./authService";
+
+export { getUserName } from "./userService";

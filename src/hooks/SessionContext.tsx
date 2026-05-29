@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import type { Session, SessionStatus } from "../types";
 import { mockSessionService } from "../services/sessionService";
 import { mockRatingService } from "../services/ratingService";
+import { useAuth } from "./AuthContext";
 
 type SessionContextType = {
   sessions: Session[];
@@ -16,13 +17,13 @@ let nextId = 4; // seed sessions usan ids 1-3
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessions, setSessions] = useState<Session[]>([]);
+  const { user, isLoading } = useAuth();
 
-  // Cargar sesiones semilla al montar
+  // Load sessions for the authenticated user
   useEffect(() => {
-    mockSessionService.listByUser("student-1").then((seedSessions) => {
-      setSessions(seedSessions);
-    });
-  }, []);
+    if (isLoading || !user) return;
+    mockSessionService.listByUser(user.id).then(setSessions);
+  }, [user, isLoading]);
 
   const addSession = useCallback(
     (data: Omit<Session, "id" | "createdAt">) => {
