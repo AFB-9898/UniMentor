@@ -60,4 +60,48 @@ describe("mentorService", () => {
     });
     expect(mentors).toHaveLength(1);
   });
+
+  describe("updateProfile", () => {
+    it("returns the updated mentor when given valid id and bio data", async () => {
+      const { mockMentorService } = await import("./mentorService");
+      const result = await mockMentorService.updateProfile("1", {
+        bio: "New bio text",
+      });
+
+      expect(result.id).toBe("1");
+      expect(result.bio).toBe("New bio text");
+      // Verify the original mentor in the list was also mutated
+      const mentor = await mockMentorService.getById("1");
+      expect(mentor!.bio).toBe("New bio text");
+    });
+
+    it("returns the updated mentor when specialties are changed", async () => {
+      const { mockMentorService } = await import("./mentorService");
+      const result = await mockMentorService.updateProfile("2", {
+        specialty: ["UX Design", "User Research"],
+      });
+
+      expect(result.id).toBe("2");
+      expect(result.specialty).toEqual(["UX Design", "User Research"]);
+    });
+
+    it("rejects with an error when the id does not exist", async () => {
+      const { mockMentorService } = await import("./mentorService");
+
+      await expect(
+        mockMentorService.updateProfile("non-existent", { bio: "test" }),
+      ).rejects.toThrow("Mentor not found");
+    });
+
+    it("preserves unchanged fields when updating only bio", async () => {
+      const { mockMentorService } = await import("./mentorService");
+      const result = await mockMentorService.updateProfile("1", {
+        bio: "Only bio changed",
+      });
+
+      expect(result.name).toBe("Carlos Mendoza");
+      expect(result.specialty).toEqual(["React", "TypeScript"]);
+      expect(result.rating).toBe(4);
+    });
+  });
 });

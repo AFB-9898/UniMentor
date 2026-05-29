@@ -9,10 +9,10 @@
 | Prioridad | Total | Pendiente | En Progreso | Completada |
 |-----------|-------|-----------|-------------|------------|
 | 🔴 Alta | 6 | 0 | 0 | 6 |
-| 🟡 Media | 6 | 1 | 0 | 5 |
+| 🟡 Media | 6 | 0 | 0 | 6 |
 | 🟡 Media | 8 | 2 | 0 | 6 |
 | 🟢 Baja | 4 | 3 | 1 | 0 |
-| **Total** | **18** | **6** | **1** | **11** |
+| **Total** | **18** | **5** | **1** | **12** |
 
 ---
 
@@ -37,7 +37,7 @@
 | 8 | RatingPage | ✅ Completada | 2026-05-28 | 2026-05-28 | Pantalla /rate/:id con flujo completo: form, confirmación, estados de error |
 | 9 | Student Dashboard | ✅ Completada | 2026-05-28 | 2026-05-28 | Dashboard de estudiante con stats, búsqueda, cards de mentores, sin secciones demo |
 | 10 | Unificar BookingPage con SessionBookingForm | ✅ Completada | 2026-05-28 | 2026-05-28 | BookingPage usa SessionBookingForm con RHF+Zod, dark mode, sin datos duplicados |
-| 19 | Edición inline de perfil de mentor | ⏳ Pendiente | — | — | Editar bio y especialidades desde el perfil público propio |
+| 19 | Edición inline de perfil de mentor | ✅ Completada | 2026-05-28 | 2026-05-28 | Editar bio y especialidades inline desde el perfil público propio. TDD, 74 tests |
 | 20 | Vista de sesiones del mentor | ⏳ Pendiente | — | — | Pantalla /mentor-sessions con nombres de estudiantes |
 
 ## 🟢 Prioridad Baja
@@ -252,3 +252,19 @@
 - Componentes compartidos (`Input`, `Select`, `FormField`) con dark mode
 
 **Build:** ✅ | **Tests:** 53 pasando ✅ | **Issue #10 completada** ✅
+
+### 2026-05-28 — Inline Mentor Profile Edit (#19)
+
+**Issues trabajadas:** #19
+**Detalle:**
+- Agregado `updateProfile(id, data)` a interfaz `MentorService` + mock con mutación in-place
+- `MentorProfilePage` extendida con modo edición inline:
+  - Ownership check via `useAuth().user.id === mentor.id` — solo el dueño edita
+  - Bio: párrafo → textarea con placeholder en edición, cancelar restaura original
+  - Especialidades: tags con botones add/remove en edición, cancelar restaura
+  - Save → `updateProfile()` → actualiza estado local, sale de edición
+  - Error → mensaje inline, se queda en edición para reintentar
+  - Loading → botones deshabilitados con "Guardando..." + double-save guard
+- Tests TDD: 17 tests nuevos cubriendo R1-R8 (ownership, bio, specialties, save, cancel, loading, error, double-save)
+
+**Build:** ✅ | **Tests:** 74 pasando (10 suites) ✅ | **Issue #19 completada** ✅

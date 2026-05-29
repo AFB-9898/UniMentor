@@ -9,6 +9,7 @@ export interface MentorFilters {
 export interface MentorService {
   list(filters?: MentorFilters): Promise<Mentor[]>;
   getById(id: string): Promise<Mentor | null>;
+  updateProfile(id: string, data: { bio?: string; specialty?: string[] }): Promise<Mentor>;
 }
 
 const mockMentors: Mentor[] = [
@@ -71,5 +72,21 @@ export const mockMentorService: MentorService = {
 
   async getById(id) {
     return mockMentors.find((m) => m.id === id) ?? null;
+  },
+
+  async updateProfile(id, data) {
+    const index = mockMentors.findIndex((m) => m.id === id);
+    if (index === -1) {
+      throw new Error("Mentor not found");
+    }
+
+    const updated: Mentor = {
+      ...mockMentors[index],
+      ...(data.bio !== undefined && { bio: data.bio }),
+      ...(data.specialty !== undefined && { specialty: data.specialty }),
+    };
+
+    mockMentors[index] = updated;
+    return updated;
   },
 };
