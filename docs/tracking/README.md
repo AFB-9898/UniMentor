@@ -11,8 +11,8 @@
 | 🔴 Alta | 6 | 0 | 0 | 6 |
 | 🟡 Media | 6 | 0 | 0 | 6 |
 | 🟡 Media | 8 | 1 | 0 | 7 |
-| 🟢 Baja | 4 | 3 | 1 | 0 |
-| **Total** | **18** | **4** | **1** | **13** |
+| 🟢 Baja | 4 | 2 | 1 | 1 |
+| **Total** | **18** | **3** | **1** | **14** |
 
 ---
 
@@ -44,7 +44,7 @@
 
 | # | Issue | Estado | Inicio | Término | Notas |
 |---|-------|--------|--------|---------|-------|
-| 11 | Centralizar mock data en src/data/ | ⏳ Pendiente | — | — | — |
+| 11 | Centralizar mock data en src/data/ | ✅ Completada | 2026-05-29 | 2026-05-29 | mockMentors extraído a src/data/mockMentors.ts, mentorService.ts lo importa |
 | 12 | Reemplazar alert() por feedback visual | ⏳ En Progreso | — | — | BookingPage sin alert(), falta SessionBookingForm (línea 28) |
 | 13 | Agregar estados de carga y vacío | ⏳ Pendiente | — | — | — |
 | 14 | Configurar deploy en Vercel | ⏳ Pendiente | — | — | — |
@@ -288,3 +288,14 @@
 - **Bug corregido**: el SessionContext cargaba sesiones de un estudiante fijo sin importar quién usaba la app
 
 **Build:** ✅ | **Tests:** 85 pasando (14 suites) ✅ | **Issue #20 completada** ✅
+
+### 2026-05-29 — Centralizar mock data (#11)
+
+**Issues trabajadas:** #11
+**Detalle:**
+- Extraído `mockMentors[]` de `src/services/mentorService.ts` a `src/data/mockMentors.ts`
+- `mentorService.ts` ahora importa el array desde `data/`
+- Sin cambios funcionales — misma data, mismo comportamiento
+- Parte de la preparación para conectar backend real
+
+**Tests:** 85 pasando (14 suites) ✅ | **Build:** ✅ | **Issue #11 completada** ✅
