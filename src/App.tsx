@@ -1,9 +1,10 @@
 import { Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./hooks/AuthContext";
+import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import { SessionProvider } from "./hooks/SessionContext";
 import { ThemeProvider } from "./theme/ThemeProvider";
 import { ToastProvider } from "./hooks/ToastContext";
 import { ProtectedRoute, PublicOnlyRoute } from "./shared/components/ProtectedRoute";
+import SplashScreen from "./components/screens/SplashScreen";
 import BookingPage from "./components/screens/BookingPage";
 import MySessionsPage from "./components/screens/MySessionsPage";
 import LoginPage from "./components/screens/LoginPage";
@@ -88,12 +89,23 @@ function AppContent() {
   );
 }
 
+/** Wraps auth loading to show splash screen before content */
+function AppRouter() {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return <SplashScreen />;
+  }
+
+  return <AppContent />;
+}
+
 function App() {
   return (
     <ThemeProvider>
       <ToastProvider>
         <AuthProvider>
-          <AppContent />
+          <AppRouter />
         </AuthProvider>
       </ToastProvider>
     </ThemeProvider>
