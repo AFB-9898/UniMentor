@@ -13,6 +13,33 @@ export interface MentorService {
   updateProfile(id: string, data: { bio?: string; specialty?: string[] }): Promise<Mentor>;
 }
 
+const STORAGE_KEY = "unimentor_mentors";
+
+/** Load mentors from localStorage, falling back to mock seed data */
+function loadMentors(): Mentor[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as Mentor[];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch {
+    // localStorage not available or corrupted — fall through
+  }
+  return [...mockMentors];
+}
+
+/** Persist mentors to localStorage */
+function saveMentors(mentors: Mentor[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(mentors));
+  } catch {
+    // localStorage not available — silently ignore
+  }
+}
+
 function applyFilters(mentors: Mentor[], filters?: MentorFilters): Mentor[] {
   if (!filters) return mentors;
 
@@ -30,28 +57,41 @@ function applyFilters(mentors: Mentor[], filters?: MentorFilters): Mentor[] {
   });
 }
 
+/** In-memory cache, hydrated from localStorage on first access */
+let cachedMentors: Mentor[] | null = null;
+
+function getMentors(): Mentor[] {
+  if (!cachedMentors) {
+    cachedMentors = loadMentors();
+  }
+  return cachedMentors;
+}
+
 export const mockMentorService: MentorService = {
   async list(filters) {
-    return applyFilters(mockMentors, filters);
+    return applyFilters(getMentors(), filters);
   },
 
   async getById(id) {
-    return mockMentors.find((m) => m.id === id) ?? null;
+    return getMentors().find((m) => m.id === id) ?? null;
   },
 
   async updateProfile(id, data) {
-    const index = mockMentors.findIndex((m) => m.id === id);
+    const mentors = getMentors();
+    const index = mentors.findIndex((m) => m.id === id);
     if (index === -1) {
       throw new Error("Mentor not found");
     }
 
     const updated: Mentor = {
-      ...mockMentors[index],
+      ...mentors[index],
       ...(data.bio !== undefined && { bio: data.bio }),
       ...(data.specialty !== undefined && { specialty: data.specialty }),
     };
 
-    mockMentors[index] = updated;
+    mentors[index] = updated;
+    cachedMentors = mentors;
+    saveMentors(mentors);
     return updated;
   },
 };

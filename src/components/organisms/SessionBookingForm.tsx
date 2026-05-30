@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { sessionFormSchema, type SessionFormData } from "../../shared/schemas/session.schema";
@@ -32,11 +33,18 @@ export default function SessionBookingForm({
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<SessionFormData>({
     resolver: zodResolver(sessionFormSchema),
-    defaultValues: defaultMentorId ? { mentorId: defaultMentorId } : undefined,
   });
+
+  // Seed mentorId when defaultMentorId is provided so Zod sees it on submit
+  useEffect(() => {
+    if (defaultMentorId) {
+      setValue("mentorId", defaultMentorId);
+    }
+  }, [defaultMentorId, setValue]);
 
   function onSubmit(data: SessionFormData) {
     externalOnSubmit(data);

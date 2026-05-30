@@ -283,14 +283,16 @@ export default function MentorProfilePage() {
       {/* Acciones — solo cuando no estamos editando */}
       {!isEditing && (
         <div className="flex gap-3">
-          <button
-            onClick={() => navigate(`/app/book/${mentor.id}`)}
-            className="flex-1 px-6 py-3 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
-          >
-            Agendar sesión con {mentor.name.split(" ")[0]}
-          </button>
+          {!isOwner && (
+            <button
+              onClick={() => navigate(`/app/book/${mentor.id}`)}
+              className="flex-1 px-6 py-3 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
+            >
+              Agendar sesión con {mentor.name.split(" ")[0]}
+            </button>
+          )}
           <Link
-            to="/"
+            to={user ? (user.role === "mentor" ? "/app/dashboard" : "/app") : "/"}
             className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md text-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             Volver al inicio

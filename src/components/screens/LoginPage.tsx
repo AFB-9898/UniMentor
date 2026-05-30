@@ -23,6 +23,7 @@ export default function LoginPage() {
     try {
       await login(email, password);
       navigate("/app");
+      // Role-based redirect handled by AppRouter via AuthContext setIsLoading transition
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {
@@ -88,6 +89,12 @@ export default function LoginPage() {
             Registrate
           </Link>
         </p>
+
+        <div className="text-center mt-4">
+          <Link to="/" className="text-xs text-gray-400 hover:text-primary transition-colors">
+            ← Volver al inicio
+          </Link>
+        </div>
 
         <div className="mt-6 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-md text-xs text-gray-400 dark:text-gray-500">
           <p className="font-medium mb-1 text-gray-600 dark:text-gray-400">Credenciales de prueba:</p>

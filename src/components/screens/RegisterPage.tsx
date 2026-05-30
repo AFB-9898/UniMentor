@@ -138,6 +138,12 @@ export default function RegisterPage() {
             Iniciar sesión
           </Link>
         </p>
+
+        <div className="text-center mt-4">
+          <Link to="/" className="text-xs text-gray-400 hover:text-primary transition-colors">
+            ← Volver al inicio
+          </Link>
+        </div>
       </div>
     </div>
   );

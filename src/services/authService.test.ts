@@ -1,6 +1,23 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
+
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] ?? null,
+    setItem: (key: string, value: string) => { store[key] = value; },
+    removeItem: (key: string) => { delete store[key]; },
+    clear: () => { store = {}; },
+    key: (_: number) => null,
+    get length() { return Object.keys(store).length; },
+  };
+})();
+
+vi.stubGlobal("localStorage", localStorageMock);
 
 describe("authService", () => {
+  beforeEach(() => {
+    localStorageMock.clear();
+  });
   it("logs in with valid credentials", async () => {
     const { mockAuthService } = await import("./authService");
     const result = await mockAuthService.login({

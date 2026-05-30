@@ -32,7 +32,26 @@ interface MockUser {
   password: string;
 }
 
-let currentUser: User | null = null;
+const STORAGE_KEY = "unimentor_user";
+
+function loadUser(): User | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as User) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveUser(user: User) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+}
+
+function clearUser() {
+  localStorage.removeItem(STORAGE_KEY);
+}
+
+let currentUser: User | null = loadUser();
 
 const mockUsers: MockUser[] = [
   {
@@ -127,6 +146,7 @@ export const mockAuthService: AuthService = {
     }
 
     currentUser = found.user;
+    saveUser(found.user);
     return { user: found.user, token: generateToken() };
   },
 
@@ -140,12 +160,14 @@ export const mockAuthService: AuthService = {
     const newUser = buildUser(data);
     mockUsers.push({ user: newUser, password: data.password });
     currentUser = newUser;
+    saveUser(newUser);
 
     return { user: newUser, token: generateToken() };
   },
 
   async logout() {
     currentUser = null;
+    clearUser();
   },
 
   async getCurrentUser() {

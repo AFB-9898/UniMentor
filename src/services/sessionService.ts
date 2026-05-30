@@ -20,7 +20,7 @@ const sessions: Session[] = [
   {
     id: "1",
     mentorId: "1",
-    studentId: "student-1",
+    studentId: "s1",
     status: "completed",
     date: "2026-05-20",
     topic: "Introducción a React con TypeScript",
@@ -30,7 +30,7 @@ const sessions: Session[] = [
   {
     id: "2",
     mentorId: "2",
-    studentId: "student-1",
+    studentId: "s1",
     status: "confirmed",
     date: "2026-06-01",
     topic: "Principios de UX Design",
@@ -39,7 +39,7 @@ const sessions: Session[] = [
   {
     id: "3",
     mentorId: "3",
-    studentId: "student-1",
+    studentId: "s1",
     status: "pending",
     date: "2026-06-10",
     topic: "Modelado de bases de datos relacionales",

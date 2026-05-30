@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
 import ThemeToggle from "../atoms/ThemeToggle";
 
@@ -8,6 +8,13 @@ type HeaderProps = {
 
 export default function Header({ className = "" }: HeaderProps) {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const homeLink = !isAuthenticated
+    ? "/"
+    : user?.role === "mentor"
+      ? "/app/dashboard"
+      : "/app";
 
   return (
     <header
@@ -16,7 +23,7 @@ export default function Header({ className = "" }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
-          to="/"
+          to={homeLink}
           className="flex items-center gap-2 text-xl font-bold text-primary hover:text-primary-dark transition-colors"
         >
           <img
@@ -30,17 +37,26 @@ export default function Header({ className = "" }: HeaderProps) {
         {/* Nav links */}
         <nav className="flex items-center gap-6">
           <Link
-            to="/"
+            to={homeLink}
             className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
           >
             Inicio
           </Link>
-          <Link
-            to="/mentors"
-            className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
-          >
-            Mentores
-          </Link>
+          {isAuthenticated && user?.role === "mentor" ? (
+            <Link
+              to="/app/my-sessions"
+              className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
+            >
+              Mis estudiantes
+            </Link>
+          ) : (
+            <Link
+              to="/mentors"
+              className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors"
+            >
+              Mentores
+            </Link>
+          )}
         </nav>
 
         {/* Right side: ThemeToggle + Auth */}
@@ -70,7 +86,7 @@ export default function Header({ className = "" }: HeaderProps) {
                 {user.name}
               </span>
               <button
-                onClick={() => logout()}
+                onClick={async () => { await logout(); navigate("/"); }}
                 className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Cerrar sesión

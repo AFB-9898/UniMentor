@@ -1,13 +1,22 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/AuthContext";
 
 export default function Footer() {
+  const { user, isAuthenticated } = useAuth();
+
+  const homeLink = !isAuthenticated
+    ? "/"
+    : user?.role === "mentor"
+      ? "/app/dashboard"
+      : "/app";
+
   return (
     <footer className="w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand & description */}
           <div>
-            <Link to="/" className="text-lg font-bold text-primary hover:text-primary-dark transition-colors">
+            <Link to={homeLink} className="text-lg font-bold text-primary hover:text-primary-dark transition-colors">
               UniMentor
             </Link>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
@@ -47,17 +56,26 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex flex-col gap-2">
               <Link
-                to="/"
+                to={homeLink}
                 className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors"
               >
                 Inicio
               </Link>
-              <Link
-                to="/mentors"
-                className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors"
-              >
-                Mentores
-              </Link>
+              {isAuthenticated && user?.role === "mentor" ? (
+                <Link
+                  to="/app/my-sessions"
+                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors"
+                >
+                  Mis estudiantes
+                </Link>
+              ) : (
+                <Link
+                  to="/mentors"
+                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors"
+                >
+                  Mentores
+                </Link>
+              )}
             </div>
           </div>
         </div>

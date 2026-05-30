@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import { SessionProvider } from "./hooks/SessionContext";
 import { ThemeProvider } from "./theme/ThemeProvider";
@@ -36,19 +36,19 @@ function AppContent() {
 
         <Route element={<AppLayout />}>
           <Route path="/mentors" element={<MentorsPage />} />
+          <Route path="/mentor/:mentorId" element={<MentorProfilePage />} />
         </Route>
-
-        <Route path="/mentor/:mentorId" element={<MentorProfilePage />} />
         <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
         <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
 
         {/* ── Protected routes (SessionProvider scoped here) ── */}
         <Route element={<ProtectedLayout />}>
+          {/* Role router — /app redirects based on role */}
           <Route
             path="/app"
             element={
-              <ProtectedRoute roles={["student"]}>
-                <StudentDashboard />
+              <ProtectedRoute>
+                <RoleDashboard />
               </ProtectedRoute>
             }
           />
@@ -90,17 +90,31 @@ function AppContent() {
   );
 }
 
-/** Wraps auth loading to show splash screen for at least 1.5s */
+/** Redirects to the correct dashboard based on user role */
+function RoleDashboard() {
+  const { user } = useAuth();
+
+  if (user?.role === "mentor") {
+    return <Navigate to="/app/dashboard" replace />;
+  }
+
+  return <StudentDashboard />;
+}
+
+/** Wraps auth loading to show splash screen for at least 3s */
 function AppRouter() {
-  const { isLoading } = useAuth();
+  const { isLoading, isAuthenticated } = useAuth();
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setMinTimeElapsed(true), 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!isAuthenticated) {
+      const timer = setTimeout(() => setMinTimeElapsed(true), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated]);
 
-  if (isLoading || !minTimeElapsed) {
+  // Show splash only for non-authenticated users during loading + minimum time
+  if (!isAuthenticated && (isLoading || !minTimeElapsed)) {
     return <SplashScreen />;
   }
 

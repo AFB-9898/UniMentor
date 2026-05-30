@@ -112,21 +112,37 @@ export default function MySessionsPage() {
                   <span>🆔 #{session.id}</span>
                 </div>
 
-                {/* Rating indicator */}
+                {/* Rating indicator / detail */}
                 {session.status === "completed" && (
                   <div className="mt-3">
-                    {session.rating !== undefined ? (
-                      <div className="flex items-center gap-2">
-                        <RatingStars value={session.rating} size="sm" />
-                        <span className="text-xs text-gray-400">Calificado</span>
-                      </div>
+                    {user?.role === "student" ? (
+                      /* Student: show rating action or existing rating */
+                      session.rating !== undefined ? (
+                        <div className="flex items-center gap-2">
+                          <RatingStars value={session.rating} size="sm" />
+                          <span className="text-xs text-gray-400">Calificado</span>
+                        </div>
+                      ) : (
+                        <Link
+                          to={`/rate/${session.id}`}
+                          className="inline-block px-3 py-1 bg-secondary/10 text-secondary-dark text-xs font-medium rounded-md hover:bg-secondary/20 transition-colors"
+                        >
+                          Calificar sesión
+                        </Link>
+                      )
                     ) : (
-                      <Link
-                        to={`/rate/${session.id}`}
-                        className="inline-block px-3 py-1 bg-secondary/10 text-secondary-dark text-xs font-medium rounded-md hover:bg-secondary/20 transition-colors"
-                      >
-                        Calificar sesión
-                      </Link>
+                      /* Mentor: show rating feedback or completed status */
+                      <div className="flex items-center gap-2">
+                        {session.rating !== undefined && (
+                          <>
+                            <RatingStars value={session.rating} size="sm" />
+                            <span className="text-xs text-gray-400">Calificado por el estudiante</span>
+                          </>
+                        )}
+                        <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                          ✓ Completada
+                        </span>
+                      </div>
                     )}
                   </div>
                 )}
