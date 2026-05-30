@@ -11,8 +11,8 @@
 | 🔴 Alta | 6 | 0 | 0 | 6 |
 | 🟡 Media | 6 | 0 | 0 | 6 |
 | 🟡 Media | 8 | 1 | 0 | 7 |
-| 🟢 Baja | 4 | 2 | 0 | 2 |
-| **Total** | **18** | **3** | **0** | **15** |
+| 🟢 Baja | 4 | 1 | 0 | 3 |
+| **Total** | **18** | **2** | **0** | **16** |
 
 ---
 
@@ -46,7 +46,7 @@
 |---|-------|--------|--------|---------|-------|
 | 11 | Centralizar mock data en src/data/ | ✅ Completada | 2026-05-29 | 2026-05-29 | mockMentors extraído a src/data/mockMentors.ts, mentorService.ts lo importa |
 | 12 | Reemplazar alert() por feedback visual | ✅ Completada | 2026-05-29 | 2026-05-29 | Toast component + ToastContext creados, conectados en App, BookingPage muestra notificación |
-| 13 | Agregar estados de carga y vacío | ⏳ Pendiente | — | — | — |
+| 13 | Agregar estados de carga y vacío | ✅ Completada | 2026-05-29 | 2026-05-29 | LoadingSpinner + Skeleton atoms creados; StudentDashboard y MySessionsPage con loading states |
 | 14 | Configurar deploy en Vercel | ⏳ Pendiente | — | — | — |
 
 ---
@@ -311,3 +311,16 @@
 - Sin `alert()` en todo el código base
 
 **Tests:** 85 pasando (14 suites) ✅ | **Build:** ✅ | **Issue #12 completada** ✅
+
+### 2026-05-29 — Loading states and empty/loading components (#13)
+
+**Issues trabajadas:** #13
+**Detalle:**
+- Creado `src/shared/components/LoadingSpinner.tsx` — spinner animado con variantes sm/md/lg y label accesible
+- Creado `src/shared/components/Skeleton.tsx` — placeholder con variantes text/card/avatar y animate-pulse
+- **StudentDashboard**: agregado loading state con skeletons para stats, búsqueda y cards mientras carga mentores
+- **MySessionsPage**: agregado loading state con spinner mientras `SessionContext` carga sesiones
+- **SessionContext**: expone `sessionsLoading` para que las pantallas sepan cuándo está cargando
+- Tests actualizados con `sessionsLoading: false` en mocks
+
+**Tests:** 85 pasando (14 suites) ✅ | **Build:** ✅ | **Issue #13 completada** ✅

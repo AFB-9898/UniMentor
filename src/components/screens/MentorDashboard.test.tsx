@@ -74,7 +74,7 @@ describe("MentorDashboard — student name in session cards", () => {
       isAuthenticated: true,
       isLoading: false,
     });
-    mockUseSessions.mockReturnValue({ sessions });
+    mockUseSessions.mockReturnValue({ sessions, sessionsLoading: false });
     mockGetById.mockResolvedValue(mentorProfile);
     mockGetAverage.mockResolvedValue({ average: 4.5, count: 10 });
   });

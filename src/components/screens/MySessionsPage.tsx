@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/AuthContext";
 import { getUserName } from "../../services/userService";
 import { formatDate } from "../../utils/formatDate";
 import RatingStars from "../atoms/RatingStars";
+import LoadingSpinner from "../../shared/components/LoadingSpinner";
 
 const statusLabels: Record<string, string> = {
   pending: "Pendiente",
@@ -20,8 +21,19 @@ const statusColors: Record<string, string> = {
 };
 
 export default function MySessionsPage() {
-  const { sessions } = useSessions();
+  const { sessions, sessionsLoading } = useSessions();
   const { user } = useAuth();
+
+  // Loading state
+  if (sessionsLoading) {
+    return (
+      <div className="max-w-3xl mx-auto p-6">
+        <div className="flex justify-center py-20">
+          <LoadingSpinner size="lg" label="Cargando sesiones..." />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">

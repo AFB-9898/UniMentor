@@ -6,6 +6,7 @@ import { useAuth } from "./AuthContext";
 
 type SessionContextType = {
   sessions: Session[];
+  sessionsLoading: boolean;
   addSession: (data: Omit<Session, "id" | "createdAt">) => void;
   updateSessionStatus: (id: string, status: SessionStatus) => void;
   rateSession: (id: string, rating: number) => Promise<void>;
@@ -17,12 +18,22 @@ let nextId = 4; // seed sessions usan ids 1-3
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
   const { user, isLoading } = useAuth();
 
   // Load sessions for the authenticated user
   useEffect(() => {
-    if (isLoading || !user) return;
-    mockSessionService.listByUser(user.id).then(setSessions);
+    if (isLoading) return;
+    if (!user) {
+      setSessions([]);
+      setSessionsLoading(false);
+      return;
+    }
+    setSessionsLoading(true);
+    mockSessionService.listByUser(user.id).then((result) => {
+      setSessions(result);
+      setSessionsLoading(false);
+    });
   }, [user, isLoading]);
 
   const addSession = useCallback(
@@ -52,7 +63,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
 
   return (
     <SessionContext.Provider
-      value={{ sessions, addSession, updateSessionStatus, rateSession }}
+      value={{ sessions, sessionsLoading, addSession, updateSessionStatus, rateSession }}
     >
       {children}
     </SessionContext.Provider>

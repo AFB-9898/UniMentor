@@ -45,7 +45,7 @@ function renderPage() {
 describe("MySessionsPage — conditional name display by role", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseSessions.mockReturnValue({ sessions });
+    mockUseSessions.mockReturnValue({ sessions, sessionsLoading: false });
   });
 
   it("shows student name when user is mentor", () => {
