@@ -46,7 +46,7 @@ export default function BookingPage() {
     });
 
     toast.success("Sesión solicitada con éxito");
-    setTimeout(() => navigate("/my-sessions"), 800);
+    setTimeout(() => navigate("/app/my-sessions"), 800);
   }
 
   /* ── Loading ── */
@@ -82,7 +82,7 @@ export default function BookingPage() {
             El mentor que buscas no existe.
           </p>
           <Link
-            to="/"
+            to="/app"
             className="mt-6 inline-block px-6 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
           >
             Volver al inicio
@@ -98,7 +98,7 @@ export default function BookingPage() {
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-        <Link to="/" className="hover:text-primary transition-colors">
+        <Link to="/app" className="hover:text-primary transition-colors">
           ← Inicio
         </Link>
         <span>/</span>

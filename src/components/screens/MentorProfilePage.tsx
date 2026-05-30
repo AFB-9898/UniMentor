@@ -284,7 +284,7 @@ export default function MentorProfilePage() {
       {!isEditing && (
         <div className="flex gap-3">
           <button
-            onClick={() => navigate(`/book/${mentor.id}`)}
+            onClick={() => navigate(`/app/book/${mentor.id}`)}
             className="flex-1 px-6 py-3 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
           >
             Agendar sesión con {mentor.name.split(" ")[0]}

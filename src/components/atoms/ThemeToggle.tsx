@@ -1,12 +1,16 @@
 import { useTheme } from "../../theme/ThemeProvider";
 
-export default function ThemeToggle() {
+type ThemeToggleProps = {
+  className?: string;
+};
+
+export default function ThemeToggle({ className = "" }: ThemeToggleProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+      className={`p-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${className}`.trim()}
       aria-label={theme === "dark" ? "Activar modo claro" : "Activar modo oscuro"}
       title={theme === "dark" ? "Modo claro" : "Modo oscuro"}
     >

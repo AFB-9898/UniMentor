@@ -39,7 +39,7 @@ export default function MySessionsPage() {
     <div className="max-w-3xl mx-auto p-6 space-y-6">
       {/* Navegación */}
       <nav className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-        <Link to="/" className="hover:text-primary transition-colors">
+        <Link to="/app" className="hover:text-primary transition-colors">
           ← Inicio
         </Link>
         <span>/</span>
@@ -56,7 +56,7 @@ export default function MySessionsPage() {
           </p>
         </div>
         <Link
-          to="/"
+          to="/app"
           className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
         >
           + Nueva sesión
@@ -70,7 +70,7 @@ export default function MySessionsPage() {
             No tenés sesiones agendadas todavía. Buscá un mentor y agendá tu primera sesión.
           </p>
           <Link
-            to="/"
+            to="/app"
             className="inline-block px-6 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
           >
             Buscar mentores

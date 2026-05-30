@@ -30,7 +30,7 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       await register({ name, email, password, role });
-      navigate("/");
+      navigate("/app");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al registrarse");
     } finally {

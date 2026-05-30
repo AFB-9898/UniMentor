@@ -60,7 +60,7 @@ export default function StudentDashboard() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
           <Link
-            to="/my-sessions"
+            to="/app/my-sessions"
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             Mis Sesiones
@@ -155,7 +155,7 @@ export default function StudentDashboard() {
                         Ver perfil
                       </button>
                       <button
-                        onClick={() => navigate(`/book/${mentor.id}`)}
+                        onClick={() => navigate(`/app/book/${mentor.id}`)}
                         className="px-4 py-1.5 bg-primary text-white text-sm rounded-md hover:bg-primary-dark transition-colors"
                       >
                         Agendar sesión

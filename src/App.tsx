@@ -1,6 +1,5 @@
-import { useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./hooks/AuthContext";
+import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./hooks/AuthContext";
 import { SessionProvider } from "./hooks/SessionContext";
 import { ThemeProvider } from "./theme/ThemeProvider";
 import { ToastProvider } from "./hooks/ToastContext";
@@ -13,57 +12,54 @@ import MentorProfilePage from "./components/screens/MentorProfilePage";
 import RatingPage from "./components/screens/RatingPage";
 import MentorDashboard from "./components/screens/MentorDashboard";
 import StudentDashboard from "./components/screens/StudentDashboard";
+import AppLayout from "./components/organisms/AppLayout";
+import LandingPage from "./components/screens/LandingPage";
+import MentorsPage from "./components/screens/MentorsPage";
 
-function HomePageRouter() {
-  const { user, isAuthenticated, isLoading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (!isAuthenticated) {
-      navigate("/login", { replace: true });
-    } else if (user?.role === "mentor") {
-      navigate("/dashboard", { replace: true });
-    } else if (user?.role === "student") {
-      navigate("/", { replace: true }); // StudentDashboard se renderiza abajo
-    }
-  }, [user, isAuthenticated, isLoading, navigate]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (isAuthenticated && user?.role === "student") {
-    return <StudentDashboard />;
-  }
-
-  // Mientras se redirige, no mostrar nada
-  return null;
+/** Wraps protected routes with SessionProvider + AppLayout */
+function ProtectedLayout() {
+  return (
+    <SessionProvider>
+      <AppLayout />
+    </SessionProvider>
+  );
 }
 
 function AppContent() {
   return (
-    <SessionProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
-        <Routes>
-          <Route path="/" element={<HomePageRouter />} />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors">
+      <Routes>
+        {/* ── Public routes (no SessionProvider) ── */}
+        <Route path="/" element={<LandingPage />} />
+
+        <Route element={<AppLayout />}>
+          <Route path="/mentors" element={<MentorsPage />} />
+        </Route>
+
+        <Route path="/mentor/:mentorId" element={<MentorProfilePage />} />
+        <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+        <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
+
+        {/* ── Protected routes (SessionProvider scoped here) ── */}
+        <Route element={<ProtectedLayout />}>
           <Route
-            path="/dashboard"
+            path="/app"
+            element={
+              <ProtectedRoute roles={["student"]}>
+                <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/app/dashboard"
             element={
               <ProtectedRoute roles={["mentor"]}>
                 <MentorDashboard />
               </ProtectedRoute>
             }
           />
-          <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
-          <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
           <Route
-            path="/book/:mentorId"
+            path="/app/book/:mentorId"
             element={
               <ProtectedRoute roles={["student"]}>
                 <BookingPage />
@@ -71,11 +67,7 @@ function AppContent() {
             }
           />
           <Route
-            path="/mentor/:mentorId"
-            element={<MentorProfilePage />}
-          />
-          <Route
-            path="/rate/:sessionId"
+            path="/app/rate/:sessionId"
             element={
               <ProtectedRoute roles={["student"]}>
                 <RatingPage />
@@ -83,16 +75,16 @@ function AppContent() {
             }
           />
           <Route
-            path="/my-sessions"
+            path="/app/my-sessions"
             element={
               <ProtectedRoute>
                 <MySessionsPage />
               </ProtectedRoute>
             }
           />
-        </Routes>
-      </div>
-    </SessionProvider>
+        </Route>
+      </Routes>
+    </div>
   );
 }
 

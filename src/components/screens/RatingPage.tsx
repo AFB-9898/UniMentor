@@ -109,7 +109,7 @@ export default function RatingPage() {
             La sesión que buscas no existe.
           </p>
           <Link
-            to="/my-sessions"
+            to="/app/my-sessions"
             className="mt-6 inline-block px-6 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
           >
             Volver a Mis Sesiones
@@ -132,7 +132,7 @@ export default function RatingPage() {
             Solo podés calificar sesiones que ya fueron completadas.
           </p>
           <Link
-            to="/my-sessions"
+            to="/app/my-sessions"
             className="mt-6 inline-block px-6 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
           >
             Volver a Mis Sesiones
@@ -148,7 +148,7 @@ export default function RatingPage() {
     return (
       <div className="max-w-2xl mx-auto p-6 space-y-6">
         <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <Link to="/my-sessions" className="hover:text-primary transition-colors">
+          <Link to="/app/my-sessions" className="hover:text-primary transition-colors">
             ← Mis Sesiones
           </Link>
           <span>/</span>
@@ -169,7 +169,7 @@ export default function RatingPage() {
             </div>
           )}
           <Link
-            to="/my-sessions"
+            to="/app/my-sessions"
             className="inline-block px-6 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors mt-4"
           >
             Volver a Mis Sesiones
@@ -197,7 +197,7 @@ export default function RatingPage() {
               Intentar de nuevo
             </button>
             <Link
-              to="/my-sessions"
+              to="/app/my-sessions"
               className="px-6 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
             >
               Volver
@@ -214,7 +214,7 @@ export default function RatingPage() {
     return (
       <div className="max-w-2xl mx-auto p-6 space-y-6">
         <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <Link to="/my-sessions" className="hover:text-primary transition-colors">
+          <Link to="/app/my-sessions" className="hover:text-primary transition-colors">
             ← Mis Sesiones
           </Link>
           <span>/</span>
@@ -236,7 +236,7 @@ export default function RatingPage() {
             {pageState.rating} / 5
           </p>
           <button
-            onClick={() => navigate("/my-sessions")}
+            onClick={() => navigate("/app/my-sessions")}
             className="inline-block px-6 py-2 bg-primary text-white text-sm font-medium rounded-md hover:bg-primary-dark transition-colors"
           >
             Volver a Mis Sesiones
@@ -252,7 +252,7 @@ export default function RatingPage() {
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-        <Link to="/my-sessions" className="hover:text-primary transition-colors">
+        <Link to="/app/my-sessions" className="hover:text-primary transition-colors">
           ← Mis Sesiones
         </Link>
         <span>/</span>

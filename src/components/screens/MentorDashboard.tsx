@@ -191,7 +191,7 @@ export default function MentorDashboard() {
             Próximas sesiones
           </h2>
           <Link
-            to="/my-sessions"
+            to="/app/my-sessions"
             className="text-sm text-primary hover:text-primary-dark transition-colors"
           >
             Ver todas →

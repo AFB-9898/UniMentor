@@ -5,7 +5,7 @@ describe("mentorService", () => {
   it("lists all mentors", async () => {
     const { mockMentorService } = await import("./mentorService");
     const mentors = await mockMentorService.list();
-    expect(mentors).toHaveLength(3);
+    expect(mentors).toHaveLength(6);
     expect(mentors[0]).toMatchObject({
       id: expect.any(String),
       name: expect.any(String),
