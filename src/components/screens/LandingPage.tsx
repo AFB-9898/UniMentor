@@ -11,7 +11,13 @@ export default function LandingPage() {
 
   useEffect(() => {
     mockMentorService.list().then((result) => {
-      setMentors(result);
+      // Order by rating desc, then sessionCount desc for "featured" selection
+      const sorted = [...result].sort((a, b) =>
+        b.rating !== a.rating
+          ? b.rating - a.rating
+          : b.sessionCount - a.sessionCount,
+      );
+      setMentors(sorted);
       setLoading(false);
     });
   }, []);
