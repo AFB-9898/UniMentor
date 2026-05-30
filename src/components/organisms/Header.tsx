@@ -17,8 +17,13 @@ export default function Header({ className = "" }: HeaderProps) {
         {/* Logo */}
         <Link
           to="/"
-          className="text-xl font-bold text-primary hover:text-primary-dark transition-colors"
+          className="flex items-center gap-2 text-xl font-bold text-primary hover:text-primary-dark transition-colors"
         >
+          <img
+            src="/favicon.png"
+            alt="UniMentor"
+            className="w-8 h-8 object-contain"
+          />
           UniMentor
         </Link>
 
