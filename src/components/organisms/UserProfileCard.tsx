@@ -21,7 +21,7 @@ export default function UserProfileCard({
 
   return (
     <div className={`
-      bg-white rounded-lg border border-gray-200 shadow-sm
+      bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm
       ${variant === "detailed" ? "p-6" : "p-4"}
     `}>
       <div className="flex items-start gap-4">
@@ -35,13 +35,13 @@ export default function UserProfileCard({
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate">{user.name}</h3>
-          <p className="text-sm text-gray-500 truncate">{user.email}</p>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">{user.name}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
 
           {isMentor && mentor && (
             <div className="mt-1 flex items-center gap-2">
               <RatingStars value={mentor.rating} size="sm" />
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-400 dark:text-gray-500">
                 ({mentor.sessionCount} sesiones)
               </span>
             </div>
@@ -53,7 +53,7 @@ export default function UserProfileCard({
               {mentor.specialty.map((spec) => (
                 <span
                   key={spec}
-                  className="px-2 py-0.5 bg-secondary/10 text-secondary text-xs rounded-full font-medium"
+                  className="px-2 py-0.5 bg-secondary/10 dark:bg-secondary/20 text-secondary text-xs rounded-full font-medium"
                 >
                   {spec}
                 </span>
@@ -65,7 +65,7 @@ export default function UserProfileCard({
 
       {/* Acciones */}
       {actions && (
-        <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2 justify-end">
+        <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex gap-2 justify-end">
           {actions}
         </div>
       )}

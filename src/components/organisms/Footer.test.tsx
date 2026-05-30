@@ -4,45 +4,76 @@ import { MemoryRouter } from "react-router-dom";
 import Footer from "./Footer";
 
 describe("Footer", () => {
-  it("renders nav links: Inicio and Mentores", () => {
+  it("renders the brand name", () => {
     render(
       <MemoryRouter>
         <Footer />
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole("link", { name: /inicio/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /mentores/i })).toBeInTheDocument();
+    expect(screen.getByText("UniMentor")).toBeInTheDocument();
   });
 
-  it("renders copyright with the year 2026", () => {
+  it("renders vision and mission sections", () => {
     render(
       <MemoryRouter>
         <Footer />
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/© 2026 UniMentor/)).toBeInTheDocument();
+    expect(screen.getByText("Nuestra Visión")).toBeInTheDocument();
+    expect(screen.getByText("Nuestra Misión")).toBeInTheDocument();
   });
 
-  it("renders links with correct hrefs", () => {
+  it("renders location: UPDS Tarija", () => {
     render(
       <MemoryRouter>
         <Footer />
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole("link", { name: /inicio/i })).toHaveAttribute("href", "/");
-    expect(screen.getByRole("link", { name: /mentores/i })).toHaveAttribute("href", "/mentors");
+    expect(screen.getByText(/Universidad Privada Domingo Savio/)).toBeInTheDocument();
+    expect(screen.getByText(/Tarija, Bolivia/)).toBeInTheDocument();
   });
 
-  it("renders copyright notice", () => {
+  it("renders copyright with UPDS Tarija", () => {
     render(
       <MemoryRouter>
         <Footer />
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/© 2026 UniMentor/)).toBeInTheDocument();
+    const currentYear = new Date().getFullYear();
+    expect(screen.getByText(new RegExp(`© ${currentYear} UniMentor`))).toBeInTheDocument();
+    expect(screen.getByText(/UPDS Tarija/)).toBeInTheDocument();
+  });
+
+  it("renders nav links with correct hrefs", () => {
+    render(
+      <MemoryRouter>
+        <Footer />
+      </MemoryRouter>,
+    );
+
+    // Inicio appears twice (brand logo + nav), so use getAllByRole
+    const inicioLinks = screen.getAllByRole("link", { name: /inicio/i });
+    expect(inicioLinks.length).toBeGreaterThanOrEqual(1);
+    expect(inicioLinks[0]).toHaveAttribute("href", "/");
+
+    const mentoresLinks = screen.getAllByRole("link", { name: /mentores/i });
+    expect(mentoresLinks.length).toBeGreaterThanOrEqual(1);
+    expect(mentoresLinks[0]).toHaveAttribute("href", "/mentors");
+  });
+
+  it("renders a description paragraph", () => {
+    render(
+      <MemoryRouter>
+        <Footer />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByText(/conectamos estudiantes universitarios/i),
+    ).toBeInTheDocument();
   });
 });

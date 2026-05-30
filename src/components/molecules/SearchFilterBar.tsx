@@ -35,28 +35,28 @@ export default function SearchFilterBar({
   }
 
   return (
-    <div className="flex flex-wrap gap-4 items-end p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="flex flex-wrap gap-4 items-end p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       {/* Búsqueda */}
       <div className="flex-1 min-w-[200px]">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar</label>
         <input
           type="text"
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
           placeholder={placeholder}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
         />
       </div>
 
       {/* Filtros dinámicos */}
       {fields.map((field) => (
         <div key={field.key} className="min-w-[150px]">
-          <label htmlFor={`filter-${field.key}`} className="block text-sm font-medium text-gray-700 mb-1">{field.label}</label>
+          <label htmlFor={`filter-${field.key}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{field.label}</label>
           <select
             id={`filter-${field.key}`}
             value={selectedFilters[field.key] || ""}
             onChange={(e) => handleFilter(field.key, e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
           >
             <option value="">Todos</option>
             {field.options.map((opt) => (
