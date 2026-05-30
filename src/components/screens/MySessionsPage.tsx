@@ -109,7 +109,6 @@ export default function MySessionsPage() {
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 truncate">{session.topic}</p>
                 <div className="flex items-center gap-4 mt-2 text-xs text-gray-400 dark:text-gray-500">
                   <span>📅 {formatDate(session.date)}</span>
-                  <span>🆔 #{session.id}</span>
                 </div>
 
                 {/* Rating indicator / detail */}
@@ -124,7 +123,7 @@ export default function MySessionsPage() {
                         </div>
                       ) : (
                         <Link
-                          to={`/rate/${session.id}`}
+                          to={`/app/rate/${session.id}`}
                           className="inline-block px-3 py-1 bg-secondary/10 text-secondary-dark text-xs font-medium rounded-md hover:bg-secondary/20 transition-colors"
                         >
                           Calificar sesión

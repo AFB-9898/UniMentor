@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Mentor } from "../../types";
 import UserProfileCard from "./UserProfileCard";
 import Skeleton from "../../shared/components/Skeleton";
@@ -6,12 +7,15 @@ type MentorGridProps = {
   mentors: Mentor[];
   loading?: boolean;
   title?: string;
+  /** Opcional: renderiza una acción por cada mentor */
+  renderAction?: (mentor: Mentor) => ReactNode;
 };
 
 export default function MentorGrid({
   mentors,
   loading = false,
   title,
+  renderAction,
 }: MentorGridProps) {
   if (loading) {
     return (
@@ -54,7 +58,11 @@ export default function MentorGrid({
       )}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {mentors.map((mentor) => (
-          <UserProfileCard key={mentor.id} user={mentor} />
+          <UserProfileCard
+            key={mentor.id}
+            user={mentor}
+            actions={renderAction ? renderAction(mentor) : undefined}
+          />
         ))}
       </div>
     </section>

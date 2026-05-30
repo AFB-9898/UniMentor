@@ -31,22 +31,28 @@ export default function BookingPage() {
     });
   }, [mentorId]);
 
-  function handleSubmit(data: SessionFormData) {
+  async function handleSubmit(data: SessionFormData) {
     if (!user) return;
 
     setIsSubmitting(true);
 
-    addSession({
-      mentorId: data.mentorId,
-      studentId: user.id,
-      status: "pending",
-      topic: data.topic,
-      date: data.date,
-      notes: data.notes,
-    });
+    try {
+      await addSession({
+        mentorId: data.mentorId,
+        studentId: user.id,
+        status: "pending",
+        topic: data.topic,
+        date: data.date,
+        notes: data.notes,
+      });
 
-    toast.success("Sesión solicitada con éxito");
-    setTimeout(() => navigate("/app/my-sessions"), 800);
+      toast.success("Sesión solicitada con éxito");
+      setTimeout(() => navigate("/app/my-sessions"), 800);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Error al crear la sesión";
+      toast.error(msg);
+      setIsSubmitting(false);
+    }
   }
 
   /* ── Loading ── */

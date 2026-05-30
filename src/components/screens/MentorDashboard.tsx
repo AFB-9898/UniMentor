@@ -25,7 +25,7 @@ const statusColors: Record<string, string> = {
 
 export default function MentorDashboard() {
   const { user, logout } = useAuth();
-  const { sessions } = useSessions();
+  const { sessions, updateSessionStatus } = useSessions();
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState<Mentor | null>(null);
@@ -209,9 +209,9 @@ export default function MentorDashboard() {
             {upcomingSessions.map((session) => (
               <div
                 key={session.id}
-                className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
+                className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="font-medium text-gray-900 dark:text-gray-100">
                     {session.topic}
                   </p>
@@ -222,11 +222,37 @@ export default function MentorDashboard() {
                     📅 {formatDate(session.date)}
                   </p>
                 </div>
-                <span
-                  className={`shrink-0 px-2.5 py-0.5 text-xs font-medium rounded-full ${statusColors[session.status]}`}
-                >
-                  {statusLabels[session.status]}
-                </span>
+                <div className="flex items-center gap-2 shrink-0 ml-4">
+                  {session.status === "pending" && (
+                    <>
+                      <button
+                        onClick={() => updateSessionStatus(session.id, "confirmed")}
+                        className="px-3 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 text-xs font-medium rounded-md hover:bg-green-200 dark:hover:bg-green-800/40 transition-colors"
+                      >
+                        Confirmar
+                      </button>
+                      <button
+                        onClick={() => updateSessionStatus(session.id, "cancelled")}
+                        className="px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs font-medium rounded-md hover:bg-red-200 dark:hover:bg-red-800/40 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  )}
+                  {session.status === "confirmed" && (
+                    <button
+                      onClick={() => updateSessionStatus(session.id, "completed")}
+                      className="px-3 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 text-xs font-medium rounded-md hover:bg-blue-200 dark:hover:bg-blue-800/40 transition-colors"
+                    >
+                      Completada
+                    </button>
+                  )}
+                  <span
+                    className={`shrink-0 px-2.5 py-0.5 text-xs font-medium rounded-full ${statusColors[session.status]}`}
+                  >
+                    {statusLabels[session.status]}
+                  </span>
+                </div>
               </div>
             ))}
           </div>

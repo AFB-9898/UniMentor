@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 
 describe("ratingService", () => {
   it("submits a rating for a completed session", async () => {
-    const { mockRatingService } = await import("./ratingService");
-    const { mockSessionService } = await import("./sessionService");
+    const { mockRatingService } = await import("./ratingService.mock");
+    const { mockSessionService } = await import("./sessionService.mock");
 
     // Create and complete a session first
     const session = await mockSessionService.create({
@@ -21,8 +21,8 @@ describe("ratingService", () => {
   });
 
   it("prevents rating a non-completed session", async () => {
-    const { mockRatingService } = await import("./ratingService");
-    const { mockSessionService } = await import("./sessionService");
+    const { mockRatingService } = await import("./ratingService.mock");
+    const { mockSessionService } = await import("./sessionService.mock");
 
     const session = await mockSessionService.create({
       mentorId: "mentor-1",
@@ -37,8 +37,8 @@ describe("ratingService", () => {
   });
 
   it("prevents double rating on the same session", async () => {
-    const { mockRatingService } = await import("./ratingService");
-    const { mockSessionService } = await import("./sessionService");
+    const { mockRatingService } = await import("./ratingService.mock");
+    const { mockSessionService } = await import("./sessionService.mock");
 
     const session = await mockSessionService.create({
       mentorId: "mentor-1",
@@ -55,7 +55,7 @@ describe("ratingService", () => {
   });
 
   it("gets average rating for a mentor", async () => {
-    const { mockRatingService } = await import("./ratingService");
+    const { mockRatingService } = await import("./ratingService.mock");
     const avg = await mockRatingService.getAverage("mentor-1");
     expect(avg).toHaveProperty("average");
     expect(avg).toHaveProperty("count");
@@ -63,8 +63,8 @@ describe("ratingService", () => {
   });
 
   it("mentor average rating updates when a new rating is added (BR-03)", async () => {
-    const { mockRatingService } = await import("./ratingService");
-    const { mockSessionService } = await import("./sessionService");
+    const { mockRatingService } = await import("./ratingService.mock");
+    const { mockSessionService } = await import("./sessionService.mock");
 
     // Create 2 completed sessions and rate them
     const s1 = await mockSessionService.create({

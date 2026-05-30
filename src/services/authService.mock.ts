@@ -1,4 +1,3 @@
-import { insforge } from "../backend/client";
 import type { User, Mentor, Student, UserRole } from "../types";
 
 export interface AuthCredentials {
@@ -34,18 +33,6 @@ interface MockUser {
 }
 
 const STORAGE_KEY = "unimentor_user";
-const REGISTRY_KEY = "unimentor_registered_users";
-
-/**
- * Real UUIDs from the InsForge database seed.
- * Using these so session/rating services can reference the DB records.
- */
-const REAL_UUIDS = {
-  studentAbraham: "a0000000-0000-0000-0000-000000000004",
-  mentorCarlos: "a0000000-0000-0000-0000-000000000001",
-  mentorMaria: "a0000000-0000-0000-0000-000000000002",
-  mentorLuis: "a0000000-0000-0000-0000-000000000003",
-} as const;
 
 function loadUser(): User | null {
   try {
@@ -64,34 +51,12 @@ function clearUser() {
   localStorage.removeItem(STORAGE_KEY);
 }
 
-/**
- * Load registered users from localStorage so they survive page reloads.
- */
-function loadRegistry(): MockUser[] {
-  try {
-    const raw = localStorage.getItem(REGISTRY_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveToRegistry(entry: MockUser) {
-  try {
-    const registry = loadRegistry();
-    registry.push(entry);
-    localStorage.setItem(REGISTRY_KEY, JSON.stringify(registry));
-  } catch {
-    // localStorage not available
-  }
-}
-
 let currentUser: User | null = loadUser();
 
-const PREDEFINED_USERS: MockUser[] = [
+const mockUsers: MockUser[] = [
   {
     user: {
-      id: REAL_UUIDS.studentAbraham,
+      id: "s1",
       name: "Abraham Estudiante",
       email: "student@test.com",
       role: "student",
@@ -103,7 +68,7 @@ const PREDEFINED_USERS: MockUser[] = [
   },
   {
     user: {
-      id: REAL_UUIDS.mentorCarlos,
+      id: "1",
       name: "Carlos Mendoza",
       email: "carlos@ejemplo.com",
       role: "mentor",
@@ -116,7 +81,7 @@ const PREDEFINED_USERS: MockUser[] = [
   },
   {
     user: {
-      id: REAL_UUIDS.mentorMaria,
+      id: "2",
       name: "María García",
       email: "maria@ejemplo.com",
       role: "mentor",
@@ -129,7 +94,7 @@ const PREDEFINED_USERS: MockUser[] = [
   },
   {
     user: {
-      id: REAL_UUIDS.mentorLuis,
+      id: "3",
       name: "Luis Torres",
       email: "luis@ejemplo.com",
       role: "mentor",
@@ -142,29 +107,13 @@ const PREDEFINED_USERS: MockUser[] = [
   },
 ];
 
-/** Merge predefined users + persisted registrations */
-function allMockUsers(): MockUser[] {
-  const registered = loadRegistry();
-  const knownEmails = new Set(PREDEFINED_USERS.map((u) => u.user.email));
-  return [...PREDEFINED_USERS, ...registered.filter((u) => !knownEmails.has(u.user.email))];
-}
-
 function generateToken(): string {
   return `mock-token-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
-function generateId(): string {
-  try {
-    return crypto.randomUUID();
-  } catch {
-    // Fallback for environments without crypto.randomUUID
-    return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-  }
-}
-
 function buildUser(data: RegisterData): Mentor | Student {
   const base = {
-    id: generateId(),
+    id: `u${mockUsers.length + 1}`,
     name: data.name,
     email: data.email,
     createdAt: new Date().toISOString().split("T")[0],
@@ -188,9 +137,9 @@ function buildUser(data: RegisterData): Mentor | Student {
   } as Mentor;
 }
 
-export const authService: AuthService = {
+export const mockAuthService: AuthService = {
   async login({ email, password }) {
-    const found = allMockUsers().find((u) => u.user.email === email);
+    const found = mockUsers.find((u) => u.user.email === email);
 
     if (!found || found.password !== password) {
       throw new Error("Credenciales inválidas");
@@ -202,54 +151,16 @@ export const authService: AuthService = {
   },
 
   async register(data) {
-    const exists = allMockUsers().find((u) => u.user.email === data.email);
+    const exists = mockUsers.find((u) => u.user.email === data.email);
 
     if (exists) {
       throw new Error("El email ya está registrado");
     }
 
     const newUser = buildUser(data);
-    const entry: MockUser = { user: newUser, password: data.password };
-    saveToRegistry(entry);
+    mockUsers.push({ user: newUser, password: data.password });
     currentUser = newUser;
     saveUser(newUser);
-
-    // Persist to InsForge DB (cross-computer) + localStorage (offline resilience)
-    try {
-      await insforge.database.from("users").insert({
-        id: newUser.id,
-        email: newUser.email,
-        name: newUser.name,
-        role: newUser.role,
-        created_at: newUser.createdAt,
-      });
-
-      if (newUser.role === "mentor") {
-        await insforge.database.from("mentors").insert({
-          id: newUser.id,
-          specialty: newUser.specialty ?? [],
-          rating: 0,
-          session_count: 0,
-        });
-
-        // Also persist to localStorage for fast fallback
-        try {
-          const stored = JSON.parse(localStorage.getItem("unimentor_mentors") || "[]");
-          stored.push(newUser);
-          localStorage.setItem("unimentor_mentors", JSON.stringify(stored));
-        } catch {
-          // localStorage not available
-        }
-      } else {
-        await insforge.database.from("students").insert({
-          id: newUser.id,
-          university: newUser.university ?? "",
-          career: newUser.career ?? "",
-        });
-      }
-    } catch (e) {
-      console.warn("Could not persist user to InsForge DB:", e);
-    }
 
     return { user: newUser, token: generateToken() };
   },
@@ -263,6 +174,3 @@ export const authService: AuthService = {
     return currentUser;
   },
 };
-
-// Backward-compatible alias for existing imports
-export const mockAuthService = authService;

@@ -1,5 +1,4 @@
-import { mockSessionService } from "./sessionService";
-import { mockMentorService } from "./mentorService";
+import { insforge } from "../backend/client";
 
 export interface RatingResult {
   sessionId: string;
@@ -16,63 +15,85 @@ export interface RatingService {
   getAverage(mentorId: string): Promise<MentorAverage>;
 }
 
-// In-memory store for ratings (tracks which sessions have been rated)
-const ratings = new Map<string, number>();
-
-export const mockRatingService: RatingService = {
+export const ratingService: RatingService = {
   async submitRating(sessionId, rating) {
     if (rating < 1 || rating > 5) {
       throw new Error("Rating must be between 1 and 5");
     }
 
-    const session = await mockSessionService.getById(sessionId);
-    if (!session) {
+    // Fetch session from DB
+    const { data: session, error: fetchError } = await insforge.database
+      .from("sessions")
+      .select("*")
+      .eq("id", sessionId)
+      .maybeSingle();
+
+    if (fetchError || !session) {
       throw new Error("Session not found");
     }
     if (session.status !== "completed") {
       throw new Error("Session must be completed before rating");
     }
-    if (ratings.has(sessionId)) {
+    if (session.rating != null) {
       throw new Error("Session already rated");
     }
 
-    // Store the rating
-    ratings.set(sessionId, rating);
+    // Store rating on the session row
+    const { error: updateError } = await insforge.database
+      .from("sessions")
+      .update({ rating })
+      .eq("id", sessionId)
+      .select("*")
+      .single();
 
-    // Update mentor's average rating (BR-03)
-    const mentor = await mockMentorService.getById(session.mentorId);
-    if (mentor) {
-      const avg = await getAverageForMentor(session.mentorId);
-      mentor.rating = avg.average;
+    if (updateError) {
+      console.error("Error submitting rating:", updateError);
+      throw new Error("Error al guardar la calificación");
     }
+
+    // Recalculate mentor average rating (BR-03)
+    await recalcMentorAverage(session.mentor_id);
 
     return { sessionId, rating };
   },
 
   async getAverage(mentorId) {
-    return getAverageForMentor(mentorId);
+    const { data: sessions, error } = await insforge.database
+      .from("sessions")
+      .select("rating")
+      .eq("mentor_id", mentorId)
+      .not("rating", "is", null);
+
+    if (error) {
+      console.error("Error fetching ratings:", error);
+      return { average: 0, count: 0 };
+    }
+
+    const ratings = (sessions ?? [])
+      .map((s: Record<string, unknown>) => Number(s.rating))
+      .filter((r: number) => r > 0);
+
+    if (ratings.length === 0) {
+      return { average: 0, count: 0 };
+    }
+
+    const total = ratings.reduce((sum: number, r: number) => sum + r, 0);
+    return {
+      average: Math.round(total / ratings.length),
+      count: ratings.length,
+    };
   },
 };
 
-async function getAverageForMentor(mentorId: string): Promise<MentorAverage> {
-  // Get all sessions for this mentor
-  const allSessions = await mockSessionService.listByUser("student-1");
-  const mentorSessions = allSessions.filter((s) => s.mentorId === mentorId);
+// Backward-compatible alias for existing imports
+export const mockRatingService = ratingService;
 
-  // Count ratings from memory
-  let total = 0;
-  let count = 0;
+async function recalcMentorAverage(mentorId: string): Promise<void> {
+  const avg = await ratingService.getAverage(mentorId);
 
-  for (const session of mentorSessions) {
-    const saved = ratings.get(session.id);
-    if (saved !== undefined) {
-      total += saved;
-      count++;
-    }
-  }
-
-  return {
-    average: count > 0 ? Math.round(total / count) : 0,
-    count,
-  };
+  // Update the mentor's average rating in the DB
+  await insforge.database
+    .from("mentors")
+    .update({ rating: avg.average })
+    .eq("id", mentorId);
 }

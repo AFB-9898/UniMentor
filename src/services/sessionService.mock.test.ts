@@ -3,7 +3,7 @@ import type { Session } from "../types";
 
 describe("sessionService", () => {
   it("lists sessions for a student", async () => {
-    const { mockSessionService } = await import("./sessionService");
+    const { mockSessionService } = await import("./sessionService.mock");
     const sessions = await mockSessionService.listByUser("student-1");
     expect(Array.isArray(sessions)).toBe(true);
     sessions.forEach((s: Session) => {
@@ -12,7 +12,7 @@ describe("sessionService", () => {
   });
 
   it("creates a new session", async () => {
-    const { mockSessionService } = await import("./sessionService");
+    const { mockSessionService } = await import("./sessionService.mock");
     const session = await mockSessionService.create({
       mentorId: "mentor-1",
       studentId: "student-1",
@@ -25,7 +25,7 @@ describe("sessionService", () => {
   });
 
   it("gets a session by ID", async () => {
-    const { mockSessionService } = await import("./sessionService");
+    const { mockSessionService } = await import("./sessionService.mock");
     const sessions = await mockSessionService.listByUser("student-1");
     if (sessions.length > 0) {
       const found = await mockSessionService.getById(sessions[0].id);
@@ -35,13 +35,13 @@ describe("sessionService", () => {
   });
 
   it("returns null for non-existent session", async () => {
-    const { mockSessionService } = await import("./sessionService");
+    const { mockSessionService } = await import("./sessionService.mock");
     const session = await mockSessionService.getById("non-existent");
     expect(session).toBeNull();
   });
 
   it("updates session status", async () => {
-    const { mockSessionService } = await import("./sessionService");
+    const { mockSessionService } = await import("./sessionService.mock");
     const session = await mockSessionService.create({
       mentorId: "mentor-1",
       studentId: "student-1",
@@ -53,7 +53,7 @@ describe("sessionService", () => {
   });
 
   it("lists sessions for a mentor by mentorId", async () => {
-    const { mockSessionService } = await import("./sessionService");
+    const { mockSessionService } = await import("./sessionService.mock");
     const sessions = await mockSessionService.listByUser("1");
     expect(sessions.length).toBeGreaterThan(0);
     sessions.forEach((s: Session) => {
@@ -62,7 +62,7 @@ describe("sessionService", () => {
   });
 
   it("returns sessions ordered by date descending", async () => {
-    const { mockSessionService } = await import("./sessionService");
+    const { mockSessionService } = await import("./sessionService.mock");
     const sessions = await mockSessionService.listByUser("student-1");
     for (let i = 1; i < sessions.length; i++) {
       expect(new Date(sessions[i - 1].createdAt).getTime())

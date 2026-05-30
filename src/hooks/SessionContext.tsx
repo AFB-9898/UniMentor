@@ -7,14 +7,12 @@ import { useAuth } from "./AuthContext";
 type SessionContextType = {
   sessions: Session[];
   sessionsLoading: boolean;
-  addSession: (data: Omit<Session, "id" | "createdAt">) => void;
-  updateSessionStatus: (id: string, status: SessionStatus) => void;
+  addSession: (data: Omit<Session, "id" | "createdAt">) => Promise<void>;
+  updateSessionStatus: (id: string, status: SessionStatus) => Promise<void>;
   rateSession: (id: string, rating: number) => Promise<void>;
 };
 
 const SessionContext = createContext<SessionContextType | null>(null);
-
-let nextId = 4; // seed sessions usan ids 1-3
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -37,22 +35,22 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   }, [user, isLoading]);
 
   const addSession = useCallback(
-    (data: Omit<Session, "id" | "createdAt">) => {
-      const newSession: Session = {
-        ...data,
-        id: String(nextId++),
-        createdAt: new Date().toISOString(),
-      };
+    async (data: Omit<Session, "id" | "createdAt">) => {
+      const newSession = await mockSessionService.create(data);
       setSessions((prev) => [...prev, newSession]);
     },
     [],
   );
 
-  const updateSessionStatus = useCallback((id: string, status: SessionStatus) => {
-    setSessions((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, status } : s)),
-    );
-  }, []);
+  const updateSessionStatus = useCallback(
+    async (id: string, status: SessionStatus) => {
+      await mockSessionService.updateStatus(id, status);
+      setSessions((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, status } : s)),
+      );
+    },
+    [],
+  );
 
   const rateSession = useCallback(async (sessionId: string, rating: number) => {
     await mockRatingService.submitRating(sessionId, rating);

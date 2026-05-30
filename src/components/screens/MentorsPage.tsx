@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { mockMentorService } from "../../services/mentorService";
 import SearchFilterBar from "../molecules/SearchFilterBar";
 import MentorGrid from "../organisms/MentorGrid";
@@ -71,7 +72,18 @@ export default function MentorsPage() {
         onFilter={setFilters}
       />
 
-      <MentorGrid mentors={filteredMentors} loading={loading} />
+      <MentorGrid
+        mentors={filteredMentors}
+        loading={loading}
+        renderAction={(mentor) => (
+          <Link
+            to={`/mentor/${mentor.id}`}
+            className="px-4 py-1.5 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            Ver perfil
+          </Link>
+        )}
+      />
     </div>
   );
 }

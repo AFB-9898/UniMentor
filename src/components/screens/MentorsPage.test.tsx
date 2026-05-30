@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { AuthProvider } from "../../hooks/AuthContext";
+import { ThemeProvider } from "../../theme/ThemeProvider";
 import MentorsPage from "./MentorsPage";
 import { mockMentorService } from "../../services/mentorService";
 
@@ -11,6 +13,32 @@ vi.mock("../../services/mentorService", () => ({
 }));
 
 import type { Mentor } from "../../types";
+
+// Mock localStorage for jsdom
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => store[key] ?? null,
+    setItem: (key: string, value: string) => { store[key] = value; },
+    removeItem: (key: string) => { delete store[key]; },
+    clear: () => { store = {}; },
+  };
+})();
+Object.defineProperty(window, "localStorage", { value: localStorageMock });
+
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: () => ({
+    matches: false,
+    media: "",
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+  }),
+});
 
 const mockMentors: Mentor[] = [
   {
@@ -41,9 +69,19 @@ const mockMentors: Mentor[] = [
     specialty: ["Node.js", "PostgreSQL"],
     rating: 3,
     sessionCount: 12,
-    createdAt: "2026-03-08",
+    createdAt: "2026-01-15",
   },
 ];
+
+function renderWithProviders(ui: React.ReactElement) {
+  return render(
+    <ThemeProvider>
+      <AuthProvider>
+        <MemoryRouter>{ui}</MemoryRouter>
+      </AuthProvider>
+    </ThemeProvider>,
+  );
+}
 
 describe("MentorsPage", () => {
   beforeEach(() => {
@@ -53,11 +91,7 @@ describe("MentorsPage", () => {
   it("renders the page title", async () => {
     vi.mocked(mockMentorService.list).mockResolvedValue(mockMentors);
 
-    render(
-      <MemoryRouter>
-        <MentorsPage />
-      </MemoryRouter>,
-    );
+    renderWithProviders(<MentorsPage />);
 
     expect(await screen.findByText("Todos los mentores")).toBeInTheDocument();
   });
@@ -65,11 +99,7 @@ describe("MentorsPage", () => {
   it("renders all mentor cards", async () => {
     vi.mocked(mockMentorService.list).mockResolvedValue(mockMentors);
 
-    render(
-      <MemoryRouter>
-        <MentorsPage />
-      </MemoryRouter>,
-    );
+    renderWithProviders(<MentorsPage />);
 
     await waitFor(() => {
       expect(mockMentorService.list).toHaveBeenCalled();
@@ -83,11 +113,7 @@ describe("MentorsPage", () => {
   it("renders the SearchFilterBar", async () => {
     vi.mocked(mockMentorService.list).mockResolvedValue(mockMentors);
 
-    render(
-      <MemoryRouter>
-        <MentorsPage />
-      </MemoryRouter>,
-    );
+    renderWithProviders(<MentorsPage />);
 
     expect(
       await screen.findByPlaceholderText("Buscar mentor por nombre..."),
@@ -97,14 +123,23 @@ describe("MentorsPage", () => {
   it("calls mockMentorService.list on mount", async () => {
     vi.mocked(mockMentorService.list).mockResolvedValue(mockMentors);
 
-    render(
-      <MemoryRouter>
-        <MentorsPage />
-      </MemoryRouter>,
-    );
+    renderWithProviders(<MentorsPage />);
 
     await waitFor(() => {
       expect(mockMentorService.list).toHaveBeenCalled();
     });
+  });
+
+  it("renders 'Ver perfil' button for each mentor", async () => {
+    vi.mocked(mockMentorService.list).mockResolvedValue(mockMentors);
+
+    renderWithProviders(<MentorsPage />);
+
+    await waitFor(() => {
+      expect(mockMentorService.list).toHaveBeenCalled();
+    });
+
+    const buttons = await screen.findAllByText("Ver perfil");
+    expect(buttons).toHaveLength(mockMentors.length);
   });
 });
