@@ -11,8 +11,8 @@
 | 🔴 Alta | 6 | 0 | 0 | 6 |
 | 🟡 Media | 6 | 0 | 0 | 6 |
 | 🟡 Media | 8 | 1 | 0 | 7 |
-| 🟢 Baja | 4 | 1 | 0 | 3 |
-| **Total** | **18** | **2** | **0** | **16** |
+| 🟢 Baja | 4 | 0 | 0 | 4 |
+| **Total** | **18** | **1** | **0** | **17** |
 
 ---
 
@@ -47,7 +47,7 @@
 | 11 | Centralizar mock data en src/data/ | ✅ Completada | 2026-05-29 | 2026-05-29 | mockMentors extraído a src/data/mockMentors.ts, mentorService.ts lo importa |
 | 12 | Reemplazar alert() por feedback visual | ✅ Completada | 2026-05-29 | 2026-05-29 | Toast component + ToastContext creados, conectados en App, BookingPage muestra notificación |
 | 13 | Agregar estados de carga y vacío | ✅ Completada | 2026-05-29 | 2026-05-29 | LoadingSpinner + Skeleton atoms creados; StudentDashboard y MySessionsPage con loading states |
-| 14 | Configurar deploy en Vercel | ⏳ Pendiente | — | — | — |
+| 14 | Configurar deploy en Vercel | ✅ Completada | 2026-05-29 | 2026-05-29 | Deploy en https://unimentor-eight.vercel.app — build automático, HTTP 200 |
 
 ---
 
@@ -324,3 +324,16 @@
 - Tests actualizados con `sessionsLoading: false` en mocks
 
 **Tests:** 85 pasando (14 suites) ✅ | **Build:** ✅ | **Issue #13 completada** ✅
+
+### 2026-05-29 — Deploy a Vercel (#14)
+
+**Issues trabajadas:** #14
+**Detalle:**
+- Instalado y autenticado Vercel CLI
+- Proyecto creado: `abraham-flores/unimentor`
+- Build exitoso con TypeScript + Vite
+- Repositorio GitHub conectado para deploy automático en cada push
+- Env vars configuradas: VITE_INSFORGE_URL, VITE_INSFORGE_ANON_KEY
+- URL de producción: https://unimentor-eight.vercel.app
+
+**Build:** ✅ | **HTTP 200:** ✅ | **Issue #14 completada** ✅
