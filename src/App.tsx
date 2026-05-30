@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import { SessionProvider } from "./hooks/SessionContext";
 import { ThemeProvider } from "./theme/ThemeProvider";
+import { ToastProvider } from "./hooks/ToastContext";
 import { ProtectedRoute, PublicOnlyRoute } from "./shared/components/ProtectedRoute";
 import BookingPage from "./components/screens/BookingPage";
 import MySessionsPage from "./components/screens/MySessionsPage";
@@ -98,9 +99,11 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }

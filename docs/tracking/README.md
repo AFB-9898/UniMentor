@@ -11,8 +11,8 @@
 | 🔴 Alta | 6 | 0 | 0 | 6 |
 | 🟡 Media | 6 | 0 | 0 | 6 |
 | 🟡 Media | 8 | 1 | 0 | 7 |
-| 🟢 Baja | 4 | 2 | 1 | 1 |
-| **Total** | **18** | **3** | **1** | **14** |
+| 🟢 Baja | 4 | 2 | 0 | 2 |
+| **Total** | **18** | **3** | **0** | **15** |
 
 ---
 
@@ -45,7 +45,7 @@
 | # | Issue | Estado | Inicio | Término | Notas |
 |---|-------|--------|--------|---------|-------|
 | 11 | Centralizar mock data en src/data/ | ✅ Completada | 2026-05-29 | 2026-05-29 | mockMentors extraído a src/data/mockMentors.ts, mentorService.ts lo importa |
-| 12 | Reemplazar alert() por feedback visual | ⏳ En Progreso | — | — | BookingPage sin alert(), falta SessionBookingForm (línea 28) |
+| 12 | Reemplazar alert() por feedback visual | ✅ Completada | 2026-05-29 | 2026-05-29 | Toast component + ToastContext creados, conectados en App, BookingPage muestra notificación |
 | 13 | Agregar estados de carga y vacío | ⏳ Pendiente | — | — | — |
 | 14 | Configurar deploy en Vercel | ⏳ Pendiente | — | — | — |
 
@@ -299,3 +299,15 @@
 - Parte de la preparación para conectar backend real
 
 **Tests:** 85 pasando (14 suites) ✅ | **Build:** ✅ | **Issue #11 completada** ✅
+
+### 2026-05-29 — Toast notification system (#12)
+
+**Issues trabajadas:** #12
+**Detalle:**
+- Creado `src/shared/components/Toast.tsx` — componente atómico con variantes success/error/info, auto-dismiss con animación
+- Creado `src/hooks/ToastContext.tsx` — contexto global con showToast/success/error/info y provider
+- Conectado `ToastProvider` en `App.tsx` (envuelve AuthProvider)
+- `BookingPage` usa `toast.success()` al crear sesión antes de navegar a /my-sessions
+- Sin `alert()` en todo el código base
+
+**Tests:** 85 pasando (14 suites) ✅ | **Build:** ✅ | **Issue #12 completada** ✅

@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import { mockMentorService } from "../../services/mentorService";
 import { useSessions } from "../../hooks/SessionContext";
 import { useAuth } from "../../hooks/AuthContext";
+import { useToast } from "../../hooks/ToastContext";
 import RatingStars from "../atoms/RatingStars";
 import SessionBookingForm from "../organisms/SessionBookingForm";
 import type { Mentor } from "../../types";
@@ -14,6 +15,7 @@ export default function BookingPage() {
   const { addSession } = useSessions();
   const { user } = useAuth();
 
+  const toast = useToast();
   const [mentor, setMentor] = useState<Mentor | null>(null);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +45,8 @@ export default function BookingPage() {
       notes: data.notes,
     });
 
-    navigate("/my-sessions");
+    toast.success("Sesión solicitada con éxito");
+    setTimeout(() => navigate("/my-sessions"), 800);
   }
 
   /* ── Loading ── */
