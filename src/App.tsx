@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import { SessionProvider } from "./hooks/SessionContext";
@@ -89,11 +90,17 @@ function AppContent() {
   );
 }
 
-/** Wraps auth loading to show splash screen before content */
+/** Wraps auth loading to show splash screen for at least 1.5s */
 function AppRouter() {
   const { isLoading } = useAuth();
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
 
-  if (isLoading) {
+  useEffect(() => {
+    const timer = setTimeout(() => setMinTimeElapsed(true), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading || !minTimeElapsed) {
     return <SplashScreen />;
   }
 
