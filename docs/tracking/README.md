@@ -8,11 +8,10 @@
 
 | Prioridad | Total | Pendiente | En Progreso | Completada |
 |-----------|-------|-----------|-------------|------------|
-| 🔴 Alta | 6 | 0 | 0 | 6 |
-| 🟡 Media | 6 | 0 | 0 | 6 |
+| 🔴 Alta | 11 | 0 | 0 | 11 |
 | 🟡 Media | 8 | 1 | 0 | 7 |
 | 🟢 Baja | 4 | 0 | 0 | 4 |
-| **Total** | **18** | **1** | **0** | **17** |
+| **Total** | **23** | **1** | **0** | **22** |
 
 ---
 
@@ -26,6 +25,11 @@
 | 3 | Implementar capa de servicios | ✅ Completada | 2026-05-27 | 2026-05-27 | TDD: 19 tests, 3 servicios (mentor, session, rating) |
 | 4 | Login / Register | ✅ Completada | 2026-05-27 | 2026-05-28 | LoginPage, RegisterPage, authService + tests, AuthContext, ProtectedRoute |
 | 18 | Mentor Dashboard | ✅ Completada | 2026-05-28 | 2026-05-28 | Dashboard de mentor con stats, sesiones próximas, redirección inteligente por rol |
+| 22 | Migrar session/rating services a InsForge DB | ✅ Completada | 2026-05-30 | 2026-05-30 | Sesiones y ratings persisten en InsForge PostgreSQL. Mock viejos preservados como .mock.ts |
+| 23 | Persistir usuarios registrados al recargar | ✅ Completada | 2026-05-30 | 2026-05-30 | Registro de usuarios sobrevive a page reload vía localStorage registry + crypto.randomUUID |
+| 24 | Mostrar todos los mentores (DB + estáticos) | ✅ Completada | 2026-05-30 | 2026-05-30 | mentorService mergea DB + estáticos. Mentores registrados visibles cross-computer |
+| 25 | Manejar errores de DB en booking + persistir estudiantes | ✅ Completada | 2026-05-30 | 2026-05-30 | try/catch en BookingPage, inserción de estudiantes a DB en registro |
+| 26 | Actualizar contador de sesiones al completar | ✅ Completada | 2026-05-30 | 2026-05-30 | session_count en mentors se actualiza al marcar sesión como completada |
 
 ## 🟡 Prioridad Media
 
@@ -337,3 +341,38 @@
 - URL de producción: https://unimentor-eight.vercel.app
 
 **Build:** ✅ | **HTTP 200:** ✅ | **Issue #14 completada** ✅
+
+### 2026-05-30 — Migración a InsForge DB + fixes post-migración (#22, #23, #24, #25, #26)
+
+**Issues trabajadas:** #22, #23, #24, #25, #26
+**Detalle:**
+
+**Migración a InsForge DB (#22):**
+- `sessionService` migrado de mock a InsForge DB: queries con `insforge.database.from("sessions")`, snake_case→camelCase mapping
+- `ratingService` migrado: ratings se guardan en `sessions.rating`, promedio se recalcula y persiste en `mentors.rating`
+- Mock viejos preservados como `*.mock.ts` para tests. Aliases `mock*` backward-compatible en `index.ts`
+- 127 tests pasando, build limpio
+
+**Auth persistence (#23):**
+- `mockUsers` era un array en memoria — al recargar la página los usuarios registrados se perdían
+- Agregado `unimentor_registered_users` en localStorage con `saveToRegistry()` + `loadRegistry()`
+- `login()` ahora busca en `allMockUsers()` que mergea predefinidos + registrados
+- IDs cambiados de `u${Date.now()}` a `crypto.randomUUID()` para compatibilidad con DB
+
+**Mentor visibility (#24):**
+- `mentorService` migrado a consultar DB (`mentors` + join `users(*)`) con fallback a estáticos + localStorage
+- Al registrar mentor, se inserta en `users` + `mentors` de InsForge DB
+- `list()` mergea resultados DB + estáticos no presentes en DB (Ana, Roberto, Laura solo existen localmente)
+
+**Booking error handling (#25):**
+- `BookingPage.handleSubmit()` no tenía try/catch — error de DB dejaba el botón trabado en "Enviando..."
+- Agregado catch con `toast.error()` + `setIsSubmitting(false)`
+- Al registrar estudiante, también se inserta en `users` + `students` de InsForge DB (FK constraint)
+
+**Session count (#26):**
+- `session_count` en `mentors` nunca se actualizaba al completar sesiones
+- En `sessionService.updateStatus()`, al pasar a "completed" se cuentan las sesiones completadas y se actualiza `mentors.session_count`
+
+**Issues creadas y cerradas:** #22, #23, #24, #25, #26
+**Push a master:** b6a0111
+**Tests:** 127 pasando (23 suites) ✅ | **Build:** ✅
